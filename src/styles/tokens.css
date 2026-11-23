@@ -1,29 +1,99 @@
+/*
+ * Tokens de color en canales RGB ("R G B") para que Tailwind pueda aplicar
+ * opacidades: bg-brand/10, ring-danger/25, etc.
+ *
+ * - brand / ok / warn / danger / info / accent: color de la paleta, para
+ *   fondos suaves, puntos, barras, iconos y gráficas.
+ * - *-fg: variante para TEXTO sobre fondos claros/suaves (cumple WCAG AA).
+ * - brand-solid: relleno de botones y estados activos con texto blanco encima.
+ */
 :root {
-  --bg-base: #F8FAFC;
-  --bg-surface: #FFFFFF;
-  --bg-subtle: #F1F5F9;
-  --border-default: #E2E8F0;
-  --text-primary: #0F172A;
-  --text-secondary: #475569;
-  --brand-primary: #2563EB;
-  --brand-hover: #1D4ED8;
-  --status-ok: #16A34A;
-  --status-warn: #D97706;
-  --status-danger: #DC2626;
-  --status-info: #7C3AED;
+  --bg-base: 250 245 234;          /* #FAF5EA crema */
+  --bg-surface: 255 255 255;       /* #FFFFFF */
+  --bg-subtle: 243 238 226;        /* #F3EEE2 */
+  --border-default: 232 225 210;   /* #E8E1D2 */
+  --text-primary: 30 24 56;        /* #1E1838 */
+  --text-secondary: 107 100 133;   /* #6B6485 */
+
+  --brand-primary: 75 43 181;      /* #4B2BB5 */
+  --brand-hover: 61 33 150;        /* #3D2196 */
+  --brand-solid: 75 43 181;        /* relleno con texto blanco */
+  --brand-solid-hover: 61 33 150;
+  --on-brand: 255 255 255;
+  --danger-solid: 220 38 38;       /* relleno peligro con texto blanco */
+  --danger-solid-hover: 185 28 28;
+
+  --accent: 245 165 36;            /* #F5A524 naranja */
+  --status-ok: 22 160 133;         /* #16A085 verde agua */
+  --status-warn: 217 119 6;        /* #D97706 */
+  --status-danger: 220 38 38;      /* #DC2626 */
+  --status-info: 124 58 237;       /* #7C3AED */
+
+  --accent-fg: 154 91 0;           /* #9A5B00 */
+  --status-ok-fg: 14 122 101;      /* #0E7A65 */
+  --status-warn-fg: 180 83 9;      /* #B45309 */
+  --status-danger-fg: 185 28 28;   /* #B91C1C */
+  --status-info-fg: 109 40 217;    /* #6D28D9 */
+
+  --sidebar-from: 75 43 181;       /* #4B2BB5 */
+  --sidebar-to: 42 22 112;         /* #2A1670 */
+  --sidebar-text: 255 255 255;
+
+  --overlay: 30 24 56;             /* fondo de modales y cajón móvil */
+
+  --chart-1: 75 43 181;            /* morado */
+  --chart-2: 245 165 36;           /* naranja */
+  --chart-3: 22 160 133;           /* verde agua */
+  --chart-4: 168 162 184;          /* gris */
+  --chart-5: 236 72 153;           /* rosa */
+
+  --shadow-card: 0 1px 3px 0 rgb(30 24 56 / 0.06), 0 1px 2px -1px rgb(30 24 56 / 0.04);
+  --shadow-card-hover: 0 10px 24px -8px rgb(30 24 56 / 0.14), 0 2px 6px -2px rgb(30 24 56 / 0.06);
+  --shadow-pop: 0 16px 40px -12px rgb(30 24 56 / 0.25), 0 4px 12px -4px rgb(30 24 56 / 0.08);
 }
 
 .dark {
-  --bg-base: #0B1120;
-  --bg-surface: #151E32;
-  --bg-subtle: #1E293B;
-  --border-default: #334155;
-  --text-primary: #F1F5F9;
-  --text-secondary: #94A3B8;
-  --brand-primary: #3B82F6;
-  --brand-hover: #60A5FA;
-  --status-ok: #22C55E;
-  --status-warn: #F59E0B;
-  --status-danger: #EF4444;
-  --status-info: #A78BFA;
+  --bg-base: 14 11 26;             /* #0E0B1A */
+  --bg-surface: 23 19 42;          /* #17132A */
+  --bg-subtle: 33 27 58;           /* #211B3A */
+  --border-default: 46 38 80;      /* #2E2650 */
+  --text-primary: 236 233 246;     /* #ECE9F6 */
+  --text-secondary: 163 157 187;   /* #A39DBB */
+
+  --brand-primary: 139 108 246;    /* #8B6CF6 */
+  --brand-hover: 164 139 250;      /* #A48BFA */
+  --brand-solid: 109 79 224;       /* #6D4FE0: blanco encima ≥ 4.5:1 */
+  --brand-solid-hover: 91 61 212;  /* #5B3DD4 */
+  --on-brand: 255 255 255;
+  --danger-solid: 220 38 38;
+  --danger-solid-hover: 185 28 28;
+
+  --accent: 247 185 85;            /* #F7B955 */
+  --status-ok: 52 217 174;         /* #34D9AE */
+  --status-warn: 251 191 36;       /* #FBBF24 */
+  --status-danger: 248 113 113;    /* #F87171 */
+  --status-info: 196 181 253;      /* #C4B5FD */
+
+  --accent-fg: 247 185 85;
+  --status-ok-fg: 52 217 174;
+  --status-warn-fg: 251 191 36;
+  --status-danger-fg: 248 113 113;
+  --status-info-fg: 196 181 253;
+
+  --sidebar-from: 42 26 110;       /* #2A1A6E */
+  --sidebar-to: 18 13 43;          /* #120D2B */
+  --sidebar-text: 255 255 255;
+
+  --overlay: 5 4 12;
+
+  --chart-1: 139 108 246;
+  --chart-2: 247 185 85;
+  --chart-3: 52 217 174;
+  --chart-4: 110 104 136;
+  --chart-5: 244 114 182;
+
+  /* En oscuro: sin sombra, el borde marca la superficie y el hover brilla. */
+  --shadow-card: 0 0 0 0 transparent;
+  --shadow-card-hover: 0 0 0 1px rgb(139 108 246 / 0.25), 0 8px 28px -10px rgb(139 108 246 / 0.30);
+  --shadow-pop: 0 0 0 1px rgb(46 38 80 / 1), 0 20px 48px -16px rgb(0 0 0 / 0.6);
 }

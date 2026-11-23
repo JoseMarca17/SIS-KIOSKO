@@ -40,7 +40,7 @@ export default function AlertasPage() {
         <h2 className="text-lg font-semibold">Centro de alertas</h2>
         <div className="mt-4 flex flex-wrap gap-2">
           {['TODAS', 'INCIDENTE', 'VENCIDO', 'PROXIMO_VENCER', 'STOCK_BAJO'].map((x) => (
-            <button key={x} className={`rounded-xl px-3 py-2 text-xs font-semibold ${filtro === x ? 'bg-brand text-white' : 'bg-subtle text-txtsecondary'}`} onClick={() => setFiltro(x)}>
+            <button key={x} className={`rounded-xl px-3 py-2 text-xs font-semibold ${filtro === x ? 'bg-brand-solid text-on-brand' : 'bg-subtle text-txtsecondary'}`} onClick={() => setFiltro(x)}>
               {x.replace('_', ' ')}
             </button>
           ))}

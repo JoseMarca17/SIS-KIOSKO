@@ -38,7 +38,7 @@ export default function LoginPage() {
 
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-base px-4 py-10">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-56 bg-blue-500/5" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-56 bg-brand/5" aria-hidden="true" />
       <button type="button" className="icon-button absolute right-4 top-4 sm:right-6 sm:top-6" onClick={toggleTheme} aria-label={theme === 'dark' ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'}>
         {theme === 'dark' ? <Sun size={19} aria-hidden="true" /> : <Moon size={19} aria-hidden="true" />}
       </button>
@@ -46,7 +46,7 @@ export default function LoginPage() {
       <section className="card relative w-full max-w-md p-6 sm:p-8" aria-labelledby="login-title">
         <div className="mb-8 text-center">
           <div className="mx-auto flex w-fit items-center gap-3">
-            <span className="rounded-2xl bg-brand p-3 text-white" aria-hidden="true"><PackageSearch size={31} /></span>
+            <span className="rounded-2xl bg-brand-solid p-3 text-on-brand" aria-hidden="true"><PackageSearch size={31} /></span>
             <span className="text-2xl font-bold tracking-tight text-txtprimary">KioskoControl</span>
           </div>
           <h1 id="login-title" className="mt-6 text-xl font-semibold text-txtprimary">Inicia sesión</h1>
@@ -70,7 +70,7 @@ export default function LoginPage() {
                 {...register('usuarioLogin')}
               />
             </div>
-            {errors.usuarioLogin ? <p id="usuarioLogin-error" className="mt-1.5 text-xs text-danger">{errors.usuarioLogin.message}</p> : null}
+            {errors.usuarioLogin ? <p id="usuarioLogin-error" className="mt-1.5 text-xs text-danger-fg">{errors.usuarioLogin.message}</p> : null}
           </div>
 
           <div>
@@ -91,10 +91,10 @@ export default function LoginPage() {
                 {showPassword ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
               </button>
             </div>
-            {errors.password ? <p id="password-error" className="mt-1.5 text-xs text-danger">{errors.password.message}</p> : null}
+            {errors.password ? <p id="password-error" className="mt-1.5 text-xs text-danger-fg">{errors.password.message}</p> : null}
           </div>
 
-          {serverError ? <div className="rounded-xl bg-red-500/10 px-3.5 py-3 text-sm text-red-700 ring-1 ring-inset ring-red-600/20 dark:text-red-300 dark:ring-red-400/20" role="alert">{serverError}</div> : null}
+          {serverError ? <div className="rounded-xl bg-danger/10 px-3.5 py-3 text-sm text-danger-fg ring-1 ring-inset ring-danger/25" role="alert">{serverError}</div> : null}
 
           <button type="submit" className="btn-primary w-full" disabled={isSubmitting}>
             {isSubmitting ? <LoaderCircle className="animate-spin" size={18} aria-hidden="true" /> : null}

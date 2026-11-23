@@ -32,6 +32,20 @@
   :focus-visible {
     @apply outline-none ring-2 ring-brand ring-offset-2 ring-offset-base;
   }
+
+  ::selection {
+    @apply bg-brand/20;
+  }
+}
+
+/* Solo mientras se cambia de tema: transiciona colores en todo el árbol. */
+.theme-transition,
+.theme-transition *,
+.theme-transition *::before,
+.theme-transition *::after {
+  transition-property: background-color, border-color, color, fill, stroke, box-shadow !important;
+  transition-duration: 200ms !important;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1) !important;
 }
 
 @layer components {
@@ -40,7 +54,11 @@
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover focus-visible:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-brand-solid px-4 py-2.5 text-sm font-semibold text-on-brand transition-colors hover:bg-brand-solid-hover focus-visible:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-danger-solid px-4 py-2.5 text-sm font-semibold text-on-brand transition-colors hover:bg-danger-solid-hover focus-visible:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60;
   }
 
   .btn-secondary {

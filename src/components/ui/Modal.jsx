@@ -60,7 +60,7 @@ export default function Modal({ open, onClose, title, description, children, siz
   const widths = { sm: 'max-w-md', md: 'max-w-lg', lg: 'max-w-2xl' };
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-950/55 p-4 backdrop-blur-sm" onMouseDown={(event) => {
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-overlay/55 p-4 backdrop-blur-sm" onMouseDown={(event) => {
       if (event.target === event.currentTarget) onClose();
     }}>
       <section

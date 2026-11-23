@@ -13,11 +13,11 @@ import { createCategoria, listCategorias, setCategoriaActiva, updateCategoria } 
 import { createProducto, listProductos, setProductoActivo, updateProducto } from '../services/productos.service';
 
 function FieldError({ id, error }) {
-  return error ? <p id={id} className="mt-1.5 text-xs text-danger">{error.message}</p> : null;
+  return error ? <p id={id} className="mt-1.5 text-xs text-danger-fg">{error.message}</p> : null;
 }
 
 function MutationError({ mutation }) {
-  return mutation.isError ? <div className="rounded-xl bg-danger/10 px-3.5 py-3 text-sm text-danger" role="alert">{mutation.error.message}</div> : null;
+  return mutation.isError ? <div className="rounded-xl bg-danger/10 px-3.5 py-3 text-sm text-danger-fg" role="alert">{mutation.error.message}</div> : null;
 }
 
 function FormActions({ onClose, isPending, submitLabel }) {
@@ -67,7 +67,7 @@ function ProductoForm({ producto, categorias, onSubmit, onClose, mutation }) {
             <option value="">Selecciona una categoría</option>
             {categoriasDisponibles.map((categoria) => <option key={categoria.id} value={categoria.id}>{categoria.nombre}{categoria.activo ? '' : ' (inactiva)'}</option>)}
           </select>
-          {!hayCategoriasActivas ? <p id="producto-categoria-help" className="mt-1.5 text-xs text-warn">Crea o activa una categoría antes de crear productos.</p> : null}
+          {!hayCategoriasActivas ? <p id="producto-categoria-help" className="mt-1.5 text-xs text-warn-fg">Crea o activa una categoría antes de crear productos.</p> : null}
           <FieldError id="producto-categoria-error" error={errors.categoria_id} />
         </div>
       </div>
@@ -125,7 +125,7 @@ function LoadingRows({ label }) {
 function QueryError({ error }) {
   return (
     <div className="p-6" role="alert">
-      <p className="font-semibold text-danger">No se pudo cargar el catálogo.</p>
+      <p className="font-semibold text-danger-fg">No se pudo cargar el catálogo.</p>
       <p className="mt-1 text-sm text-txtsecondary">{error.message}</p>
     </div>
   );
@@ -226,10 +226,10 @@ export default function CatalogoPage() {
       </section>
 
       <div className="flex gap-2 rounded-2xl border border-borderdef bg-surface p-1.5" role="tablist" aria-label="Secciones del catálogo">
-        <button type="button" id="tab-productos" role="tab" aria-selected={tab === 'productos'} aria-controls="panel-productos" className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${tab === 'productos' ? 'bg-brand text-white' : 'text-txtsecondary hover:bg-subtle hover:text-txtprimary'}`} onClick={() => setTab('productos')}>
+        <button type="button" id="tab-productos" role="tab" aria-selected={tab === 'productos'} aria-controls="panel-productos" className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${tab === 'productos' ? 'bg-brand-solid text-on-brand' : 'text-txtsecondary hover:bg-subtle hover:text-txtprimary'}`} onClick={() => setTab('productos')}>
           <PackageOpen className="mr-2 inline" size={17} aria-hidden="true" />Productos
         </button>
-        <button type="button" id="tab-categorias" role="tab" aria-selected={tab === 'categorias'} aria-controls="panel-categorias" className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${tab === 'categorias' ? 'bg-brand text-white' : 'text-txtsecondary hover:bg-subtle hover:text-txtprimary'}`} onClick={() => setTab('categorias')}>
+        <button type="button" id="tab-categorias" role="tab" aria-selected={tab === 'categorias'} aria-controls="panel-categorias" className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${tab === 'categorias' ? 'bg-brand-solid text-on-brand' : 'text-txtsecondary hover:bg-subtle hover:text-txtprimary'}`} onClick={() => setTab('categorias')}>
           <Tags className="mr-2 inline" size={17} aria-hidden="true" />Categorías
         </button>
       </div>
@@ -331,7 +331,7 @@ export default function CatalogoPage() {
                   <tbody className="divide-y divide-borderdef">
                     {categoriasFiltradas.map((categoria) => (
                       <tr key={categoria.id} className="hover:bg-subtle">
-                        <td className="px-5 py-4"><span className="flex items-center gap-3 font-medium text-txtprimary"><span className="rounded-xl bg-info/10 p-2 text-info"><Layers3 size={17} aria-hidden="true" /></span>{categoria.nombre}</span></td>
+                        <td className="px-5 py-4"><span className="flex items-center gap-3 font-medium text-txtprimary"><span className="rounded-xl bg-info/10 p-2 text-info-fg"><Layers3 size={17} aria-hidden="true" /></span>{categoria.nombre}</span></td>
                         <td className="px-5 py-4"><Badge variant={categoria.activo ? 'success' : 'danger'}>{categoria.activo ? 'Activa' : 'Inactiva'}</Badge></td>
                         <td className="px-5 py-4"><div className="flex justify-end gap-2"><button type="button" className="icon-button h-9 w-9" onClick={() => abrirDialogo('categoria', categoria)} aria-label={`Editar ${categoria.nombre}`}><Pencil size={16} aria-hidden="true" /></button><button type="button" className="btn-secondary" onClick={() => abrirDialogo('toggle-categoria', categoria)}>{categoria.activo ? 'Desactivar' : 'Activar'}</button></div></td>
                       </tr>
@@ -356,7 +356,7 @@ export default function CatalogoPage() {
             <MutationError mutation={dialogo.tipo === 'toggle-producto' ? productoMutation : categoriaMutation} />
             <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
               <button type="button" className="btn-secondary" onClick={cerrarDialogo} disabled={productoMutation.isPending || categoriaMutation.isPending}>Cancelar</button>
-              <button type="button" className={dialogo.registro.activo ? 'inline-flex items-center justify-center gap-2 rounded-xl bg-danger px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60' : 'btn-primary'} disabled={productoMutation.isPending || categoriaMutation.isPending} onClick={() => {
+              <button type="button" className={dialogo.registro.activo ? 'btn-danger' : 'btn-primary'} disabled={productoMutation.isPending || categoriaMutation.isPending} onClick={() => {
                 const esProducto = dialogo.tipo === 'toggle-producto';
                 const variables = { accion: 'toggle', id: dialogo.registro.id, activo: !dialogo.registro.activo };
                 (esProducto ? productoMutation : categoriaMutation).mutate(variables);

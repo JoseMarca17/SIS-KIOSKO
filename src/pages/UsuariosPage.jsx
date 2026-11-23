@@ -26,11 +26,11 @@ const editSchema = z.object({ nombre_completo: nombreSchema, rol: rolSchema });
 const resetSchema = z.object({ password: passwordSchema });
 
 function FieldError({ id, error }) {
-  return error ? <p id={id} className="mt-1.5 text-xs text-danger">{error.message}</p> : null;
+  return error ? <p id={id} className="mt-1.5 text-xs text-danger-fg">{error.message}</p> : null;
 }
 
 function MutationError({ mutation }) {
-  return mutation.isError ? <div className="rounded-xl bg-red-500/10 px-3.5 py-3 text-sm text-red-700 dark:text-red-300" role="alert">{mutation.error.message}</div> : null;
+  return mutation.isError ? <div className="rounded-xl bg-danger/10 px-3.5 py-3 text-sm text-danger-fg" role="alert">{mutation.error.message}</div> : null;
 }
 
 function FormActions({ onClose, isPending, submitLabel }) {
@@ -184,7 +184,7 @@ export default function UsuariosPage() {
           <div className="space-y-4 p-6">{[1, 2, 3, 4].map((row) => <Skeleton key={row} className="h-12" label="Cargando usuarios" />)}</div>
         ) : isError ? (
           <div className="p-6" role="alert">
-            <p className="font-semibold text-danger">No se pudo cargar el listado.</p>
+            <p className="font-semibold text-danger-fg">No se pudo cargar el listado.</p>
             <p className="mt-1 text-sm text-txtsecondary">{error.message}</p>
           </div>
         ) : usuarios?.length ? (
@@ -206,7 +206,7 @@ export default function UsuariosPage() {
                   <tr key={usuario.id} className="hover:bg-subtle">
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-3">
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 font-semibold text-blue-700 dark:text-blue-300">{usuario.nombre_completo.split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase()}</span>
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand/10 font-semibold text-brand">{usuario.nombre_completo.split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase()}</span>
                         <span className="font-medium text-txtprimary">{usuario.nombre_completo}</span>
                       </div>
                     </td>
@@ -247,7 +247,7 @@ export default function UsuariosPage() {
             <MutationError mutation={mutation} />
             <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
               <button type="button" className="btn-secondary" onClick={closeDialog} disabled={mutation.isPending}>Cancelar</button>
-              <button type="button" className={dialog.user.activo ? 'inline-flex items-center justify-center gap-2 rounded-xl bg-danger px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60' : 'btn-primary'} disabled={mutation.isPending} onClick={() => mutation.mutate({ action: 'toggle_active', payload: { id: dialog.user.id, activo: !dialog.user.activo } })}>
+              <button type="button" className={dialog.user.activo ? 'btn-danger' : 'btn-primary'} disabled={mutation.isPending} onClick={() => mutation.mutate({ action: 'toggle_active', payload: { id: dialog.user.id, activo: !dialog.user.activo } })}>
                 {mutation.isPending ? <LoaderCircle className="animate-spin" size={18} /> : null}
                 {mutation.isPending ? 'Procesando…' : dialog.user.activo ? 'Desactivar usuario' : 'Activar usuario'}
               </button>

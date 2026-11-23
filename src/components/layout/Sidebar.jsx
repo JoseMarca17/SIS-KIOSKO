@@ -49,7 +49,7 @@ export default function Sidebar({ open, onClose }) {
       {open ? (
         <button
           type="button"
-          className="fixed inset-0 z-40 cursor-default bg-slate-950/55 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 cursor-default bg-overlay/55 backdrop-blur-sm lg:hidden"
           onClick={onClose}
           aria-label="Cerrar menú de navegación"
         />
@@ -58,7 +58,7 @@ export default function Sidebar({ open, onClose }) {
       <aside className={`fixed inset-y-0 left-0 z-40 flex h-screen w-64 shrink-0 flex-col border-r border-borderdef bg-surface transition-transform duration-200 ease-out lg:sticky lg:top-0 lg:z-30 lg:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'}`} aria-label="Navegación principal">
         <div className="flex h-20 items-center justify-between border-b border-borderdef px-5">
           <NavLink to="/dashboard" className="flex items-center gap-3 rounded-xl" onClick={onClose}>
-            <span className="rounded-xl bg-brand p-2 text-white" aria-hidden="true"><PackageSearch size={24} /></span>
+            <span className="rounded-xl bg-brand-solid p-2 text-on-brand" aria-hidden="true"><PackageSearch size={24} /></span>
             <span className="text-lg font-bold tracking-tight text-txtprimary">KioskoControl</span>
           </NavLink>
           <button type="button" className="icon-button border-0 lg:hidden" onClick={onClose} aria-label="Cerrar menú">
@@ -72,12 +72,12 @@ export default function Sidebar({ open, onClose }) {
               key={path}
               to={path}
               onClick={onClose}
-              className={({ isActive }) => `flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${isActive ? 'bg-brand text-white' : 'text-txtsecondary hover:bg-subtle hover:text-txtprimary'}`}
+              className={({ isActive }) => `flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${isActive ? 'bg-brand-solid text-on-brand' : 'text-txtsecondary hover:bg-subtle hover:text-txtprimary'}`}
             >
               <Icon size={19} className="shrink-0" aria-hidden="true" />
               <span className="flex-1">{label}</span>
               {counter && counters[counter] > 0 ? (
-                <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${counter === 'incidentes' ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300' : 'bg-red-500/15 text-red-700 dark:text-red-300'}`} aria-label={`${counters[counter]} pendientes`}>
+                <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${counter === 'incidentes' ? 'bg-accent/20 text-accent-fg' : 'bg-danger/15 text-danger-fg'}`} aria-label={`${counters[counter]} pendientes`}>
                   {compactCount(counters[counter])}
                 </span>
               ) : null}

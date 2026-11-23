@@ -16,11 +16,11 @@ const formatoMoneda = new Intl.NumberFormat('es-BO', { style: 'currency', curren
 const clavesProveedores = ['productos', 'categorias', 'proveedores', 'producto-proveedor', 'productos-stock', 'stock'];
 
 function FieldError({ id, error }) {
-  return error ? <p id={id} className="mt-1.5 text-xs text-danger">{error.message}</p> : null;
+  return error ? <p id={id} className="mt-1.5 text-xs text-danger-fg">{error.message}</p> : null;
 }
 
 function MutationError({ mutation }) {
-  return mutation.isError ? <div className="rounded-xl bg-danger/10 px-3.5 py-3 text-sm text-danger" role="alert">{mutation.error.message}</div> : null;
+  return mutation.isError ? <div className="rounded-xl bg-danger/10 px-3.5 py-3 text-sm text-danger-fg" role="alert">{mutation.error.message}</div> : null;
 }
 
 function FormActions({ onClose, isPending, submitLabel }) {
@@ -179,7 +179,7 @@ function GestionVinculos({ proveedor, productos, vinculos, mutation }) {
           ))}
         </ul>
       ) : <EmptyState icon={Handshake} title="Sin productos asociados" description="Vincula un producto activo para registrar su costo y tiempo de entrega." />}
-      {mutation.isSuccess && !formulario?.abierto ? <p className="rounded-xl bg-ok/10 px-3.5 py-3 text-sm text-ok" role="status">El vínculo y el proveedor principal se actualizaron correctamente.</p> : null}
+      {mutation.isSuccess && !formulario?.abierto ? <p className="rounded-xl bg-ok/10 px-3.5 py-3 text-sm text-ok-fg" role="status">El vínculo y el proveedor principal se actualizaron correctamente.</p> : null}
     </div>
   );
 }
@@ -278,7 +278,7 @@ export default function ProveedoresPage() {
 
       <section aria-busy={proveedoresQuery.isLoading} aria-label="Listado de proveedores">
         {proveedoresQuery.isLoading ? <div className="grid gap-4 lg:grid-cols-2">{[1, 2, 3, 4].map((tarjeta) => <Skeleton key={tarjeta} className="h-64 rounded-2xl" label="Cargando proveedores" />)}</div> : proveedoresQuery.isError ? (
-          <div className="card p-6" role="alert"><p className="font-semibold text-danger">No se pudo cargar el listado.</p><p className="mt-1 text-sm text-txtsecondary">{proveedoresQuery.error.message}</p></div>
+          <div className="card p-6" role="alert"><p className="font-semibold text-danger-fg">No se pudo cargar el listado.</p><p className="mt-1 text-sm text-txtsecondary">{proveedoresQuery.error.message}</p></div>
         ) : proveedoresFiltrados.length ? (
           <div className="grid gap-4 lg:grid-cols-2">
             {proveedoresFiltrados.map((proveedor) => {
@@ -299,7 +299,7 @@ export default function ProveedoresPage() {
                   <div className="mt-4 flex-1 rounded-xl bg-subtle p-3">
                     <p className="text-xs font-semibold uppercase tracking-wide text-txtsecondary">Productos asociados</p>
                     <p className="mt-1.5 text-sm text-txtprimary">{productosAsociados.length ? productosAsociados.map((vinculo) => vinculo.productos?.nombre ?? `Producto ${vinculo.producto_id}`).join(', ') : 'Ninguno todavía'}</p>
-                    {vinculosQuery.isError ? <p className="mt-1 text-xs text-danger">No se pudieron cargar los vínculos.</p> : null}
+                    {vinculosQuery.isError ? <p className="mt-1 text-xs text-danger-fg">No se pudieron cargar los vínculos.</p> : null}
                   </div>
                   <div className="mt-4 flex flex-wrap justify-end gap-2">
                     <button type="button" className="btn-secondary" onClick={() => abrirDialogo('vinculos', proveedor)} disabled={productosQuery.isLoading || productosQuery.isError || vinculosQuery.isLoading || vinculosQuery.isError}><Link2 size={16} aria-hidden="true" /> Productos</button>
@@ -322,7 +322,7 @@ export default function ProveedoresPage() {
             <MutationError mutation={proveedorMutation} />
             <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
               <button type="button" className="btn-secondary" onClick={cerrarDialogo} disabled={proveedorMutation.isPending}>Cancelar</button>
-              <button type="button" className={dialogo.registro.activo ? 'inline-flex items-center justify-center gap-2 rounded-xl bg-danger px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60' : 'btn-primary'} disabled={proveedorMutation.isPending} onClick={() => proveedorMutation.mutate({ accion: 'toggle', id: dialogo.registro.id, activo: !dialogo.registro.activo })}>
+              <button type="button" className={dialogo.registro.activo ? 'btn-danger' : 'btn-primary'} disabled={proveedorMutation.isPending} onClick={() => proveedorMutation.mutate({ accion: 'toggle', id: dialogo.registro.id, activo: !dialogo.registro.activo })}>
                 {proveedorMutation.isPending ? <LoaderCircle className="animate-spin" size={18} aria-hidden="true" /> : null}
                 {dialogo.registro.activo ? 'Desactivar' : 'Activar'}
               </button>

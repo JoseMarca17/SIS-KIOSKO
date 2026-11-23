@@ -8,10 +8,10 @@ import { getAlertasResumen } from '../../services/alertas.service';
 import { getPageTitle } from '../../routers/navigation';
 
 const alertColors = {
-  STOCK_BAJO: 'bg-amber-500',
-  PROXIMO_VENCER: 'bg-violet-500',
-  VENCIDO: 'bg-red-500',
-  INCIDENTE: 'bg-blue-500',
+  STOCK_BAJO: 'bg-warn',
+  PROXIMO_VENCER: 'bg-accent',
+  VENCIDO: 'bg-danger',
+  INCIDENTE: 'bg-info',
 };
 
 const formatDate = (value) => new Intl.DateTimeFormat('es', {
@@ -68,19 +68,19 @@ export default function Header({ onOpenMenu }) {
       <div className="relative" ref={alertsRef}>
         <button type="button" className="icon-button relative" onClick={() => setAlertsOpen((value) => !value)} aria-label={`Alertas pendientes: ${pendingCount}`} aria-expanded={alertsOpen} aria-controls="alerts-popover">
           <Bell size={19} aria-hidden="true" />
-          {pendingCount > 0 ? <span className="absolute -right-1 -top-1 rounded-full bg-red-500 px-1.5 py-0.5 text-[10px] font-bold leading-3 text-white ring-2 ring-surface">{pendingCount > 99 ? '99+' : pendingCount}</span> : null}
+          {pendingCount > 0 ? <span className="absolute -right-1 -top-1 rounded-full bg-danger-solid px-1.5 py-0.5 text-[10px] font-bold leading-3 text-on-brand ring-2 ring-surface">{pendingCount > 99 ? '99+' : pendingCount}</span> : null}
         </button>
 
         {alertsOpen ? (
           <section id="alerts-popover" className="absolute right-0 mt-3 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-borderdef bg-surface shadow-xl" aria-label="Últimas alertas pendientes">
             <div className="flex items-center justify-between border-b border-borderdef px-4 py-3">
               <h2 className="font-semibold text-txtprimary">Alertas pendientes</h2>
-              <span className="rounded-full bg-red-500/10 px-2 py-0.5 text-xs font-semibold text-red-700 dark:text-red-300">{pendingCount}</span>
+              <span className="rounded-full bg-danger/10 px-2 py-0.5 text-xs font-semibold text-danger-fg">{pendingCount}</span>
             </div>
             <div className="max-h-80 overflow-y-auto">
               {alertas?.latest?.length ? alertas.latest.map((alerta) => (
                 <article key={alerta.id} className="flex gap-3 border-b border-borderdef px-4 py-3 last:border-0">
-                  <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${alertColors[alerta.tipo] ?? 'bg-blue-500'}`} aria-hidden="true" />
+                  <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${alertColors[alerta.tipo] ?? 'bg-info'}`} aria-hidden="true" />
                   <div className="min-w-0">
                     <p className="text-xs font-semibold text-txtsecondary">{alerta.productos?.nombre ?? 'Producto'}</p>
                     <p className="mt-0.5 text-sm leading-5 text-txtprimary">{alerta.mensaje}</p>
@@ -97,13 +97,13 @@ export default function Header({ onOpenMenu }) {
       </div>
 
       <div className="hidden items-center gap-3 border-l border-borderdef pl-4 sm:flex">
-        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand text-sm font-bold text-white" aria-hidden="true">{getInitials(perfil?.nombre_completo)}</span>
+        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-solid text-sm font-bold text-on-brand" aria-hidden="true">{getInitials(perfil?.nombre_completo)}</span>
         <div className="hidden max-w-40 xl:block">
           <p className="truncate text-sm font-semibold text-txtprimary">{perfil?.nombre_completo}</p>
           <p className="text-xs text-txtsecondary">{perfil?.rol === 'ADMIN' ? 'Administrador' : 'Personal'}</p>
         </div>
       </div>
-      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand text-sm font-bold text-white sm:hidden" aria-label={`Usuario: ${perfil?.nombre_completo}`}>
+      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-solid text-sm font-bold text-on-brand sm:hidden" aria-label={`Usuario: ${perfil?.nombre_completo}`}>
         {perfil?.nombre_completo ? getInitials(perfil.nombre_completo) : <PackageSearch size={18} />}
       </span>
     </header>
