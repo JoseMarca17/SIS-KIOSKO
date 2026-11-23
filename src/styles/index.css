@@ -103,3 +103,30 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Tablas de datos unificadas: header suave, filas con hover. */
+@layer components {
+  .table-wrap {
+    @apply overflow-x-auto;
+  }
+
+  .data-table {
+    @apply w-full text-left text-sm;
+  }
+
+  .data-table thead {
+    @apply bg-subtle text-[11px] uppercase tracking-wider text-txtsecondary;
+  }
+
+  .data-table th {
+    @apply whitespace-nowrap px-5 py-3 font-semibold;
+  }
+
+  .data-table td {
+    @apply px-5 py-3.5 align-middle;
+  }
+
+  .data-table tbody tr {
+    @apply border-t border-borderdef transition-colors duration-150 hover:bg-subtle/60;
+  }
+}

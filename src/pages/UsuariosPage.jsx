@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import Badge from '../components/ui/Badge';
 import Modal from '../components/ui/Modal';
 import Skeleton from '../components/ui/Skeleton';
+import { FieldError, FormActions, MutationError } from '../components/ui/forms';
 import EmptyState from '../components/ui/EmptyState';
 import { listUsuarios, mutateUsuario } from '../services/usuarios.service';
 import { useAuthStore } from '../store/authStore';
@@ -24,26 +25,6 @@ const createSchema = z.object({
 });
 const editSchema = z.object({ nombre_completo: nombreSchema, rol: rolSchema });
 const resetSchema = z.object({ password: passwordSchema });
-
-function FieldError({ id, error }) {
-  return error ? <p id={id} className="mt-1.5 text-xs text-danger-fg">{error.message}</p> : null;
-}
-
-function MutationError({ mutation }) {
-  return mutation.isError ? <div className="rounded-xl bg-danger/10 px-3.5 py-3 text-sm text-danger-fg" role="alert">{mutation.error.message}</div> : null;
-}
-
-function FormActions({ onClose, isPending, submitLabel }) {
-  return (
-    <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
-      <button type="button" className="btn-secondary" onClick={onClose} disabled={isPending}>Cancelar</button>
-      <button type="submit" className="btn-primary" disabled={isPending}>
-        {isPending ? <LoaderCircle className="animate-spin" size={18} aria-hidden="true" /> : null}
-        {isPending ? 'Guardando…' : submitLabel}
-      </button>
-    </div>
-  );
-}
 
 function CreateUserForm({ onSubmit, onClose, mutation }) {
   const { register, handleSubmit, formState: { errors } } = useForm({

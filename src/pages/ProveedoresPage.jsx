@@ -8,32 +8,13 @@ import Badge from '../components/ui/Badge';
 import EmptyState from '../components/ui/EmptyState';
 import Modal from '../components/ui/Modal';
 import Skeleton from '../components/ui/Skeleton';
+import { FieldError, FormActions, MutationError } from '../components/ui/forms';
 import { productoProveedorSchema, proveedorSchema } from '../schemas/catalogo.schemas';
 import { listProductos } from '../services/productos.service';
 import { createProveedor, listProductoProveedor, listProveedores, setProveedorActivo, updateProveedor, upsertProductoProveedor } from '../services/proveedores.service';
 
 const formatoMoneda = new Intl.NumberFormat('es-BO', { style: 'currency', currency: 'BOB' });
 const clavesProveedores = ['productos', 'categorias', 'proveedores', 'producto-proveedor', 'productos-stock', 'stock'];
-
-function FieldError({ id, error }) {
-  return error ? <p id={id} className="mt-1.5 text-xs text-danger-fg">{error.message}</p> : null;
-}
-
-function MutationError({ mutation }) {
-  return mutation.isError ? <div className="rounded-xl bg-danger/10 px-3.5 py-3 text-sm text-danger-fg" role="alert">{mutation.error.message}</div> : null;
-}
-
-function FormActions({ onClose, isPending, submitLabel }) {
-  return (
-    <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
-      <button type="button" className="btn-secondary" onClick={onClose} disabled={isPending}>Cancelar</button>
-      <button type="submit" className="btn-primary" disabled={isPending}>
-        {isPending ? <LoaderCircle className="animate-spin" size={18} aria-hidden="true" /> : null}
-        {isPending ? 'Guardando…' : submitLabel}
-      </button>
-    </div>
-  );
-}
 
 function ProveedorForm({ proveedor, onSubmit, onClose, mutation }) {
   const { register, handleSubmit, formState: { errors } } = useForm({
