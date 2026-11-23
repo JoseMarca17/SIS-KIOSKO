@@ -54,19 +54,19 @@
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-brand-solid px-4 py-2.5 text-sm font-semibold text-on-brand transition-colors hover:bg-brand-solid-hover focus-visible:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-brand-solid px-4 py-2.5 text-sm font-semibold text-on-brand transition-[background-color,color,border-color,transform] duration-150 ease-out-expo hover:bg-brand-solid-hover active:scale-[0.97] focus-visible:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60;
   }
 
   .btn-danger {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-danger-solid px-4 py-2.5 text-sm font-semibold text-on-brand transition-colors hover:bg-danger-solid-hover focus-visible:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-danger-solid px-4 py-2.5 text-sm font-semibold text-on-brand transition-[background-color,color,border-color,transform] duration-150 ease-out-expo hover:bg-danger-solid-hover active:scale-[0.97] focus-visible:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-borderdef bg-surface px-4 py-2.5 text-sm font-semibold text-txtprimary transition-colors hover:bg-subtle focus-visible:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-borderdef bg-surface px-4 py-2.5 text-sm font-semibold text-txtprimary transition-[background-color,color,border-color,transform] duration-150 ease-out-expo hover:bg-subtle active:scale-[0.97] focus-visible:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60;
   }
 
   .icon-button {
-    @apply inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-borderdef bg-surface text-txtsecondary transition-colors hover:bg-subtle hover:text-txtprimary disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-borderdef bg-surface text-txtsecondary transition-[background-color,color,border-color,transform] duration-150 ease-out-expo hover:bg-subtle hover:text-txtprimary active:scale-[0.94] disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .card {
@@ -75,5 +75,31 @@
 
   .label {
     @apply mb-2 block text-sm font-medium text-txtprimary;
+  }
+}
+
+@layer utilities {
+  /* La campana gira desde su argolla (arriba al centro). */
+  .origin-bell {
+    transform-origin: 50% 2px;
+  }
+
+  /* Segmentos de gráficas y barras crecen desde su base. */
+  .origin-bar {
+    transform-origin: 50% 100%;
+    transform-box: fill-box;
+  }
+}
+
+/* Accesibilidad: con "reducir movimiento" las animaciones se vuelven instantáneas. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
