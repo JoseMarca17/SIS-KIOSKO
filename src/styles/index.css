@@ -1,0 +1,61 @@
+@import './tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-borderdef;
+  }
+
+  html {
+    @apply bg-base font-sans antialiased;
+  }
+
+  body {
+    @apply m-0 min-w-[320px] bg-base text-txtprimary;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand ring-offset-2 ring-offset-base;
+  }
+}
+
+@layer components {
+  .control {
+    @apply w-full rounded-xl border border-borderdef bg-surface px-3.5 py-2.5 text-sm text-txtprimary placeholder:text-txtsecondary transition-colors focus:border-brand disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover focus-visible:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-borderdef bg-surface px-4 py-2.5 text-sm font-semibold text-txtprimary transition-colors hover:bg-subtle focus-visible:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .icon-button {
+    @apply inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-borderdef bg-surface text-txtsecondary transition-colors hover:bg-subtle hover:text-txtprimary disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .card {
+    @apply rounded-2xl border border-borderdef bg-surface shadow-card;
+  }
+
+  .label {
+    @apply mb-2 block text-sm font-medium text-txtprimary;
+  }
+}
