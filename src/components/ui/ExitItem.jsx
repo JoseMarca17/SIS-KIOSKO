@@ -17,7 +17,9 @@ export default function ExitItem({ as: Tag = 'article', leaving = false, classNa
   return (
     <Tag
       ref={ref}
-      className={`${className} ${leaving ? 'pointer-events-none overflow-hidden animate-slide-out-right' : ''}`}
+      className={leaving
+        ? `${className.replace(/\banimate-[\w-]+/g, '')} pointer-events-none overflow-hidden animate-slide-out-right`
+        : className}
       style={style}
       aria-hidden={leaving || undefined}
       {...props}
