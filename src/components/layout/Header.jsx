@@ -108,7 +108,7 @@ export default function Header({ onOpenMenu }) {
         </button>
 
         {alertsOpen ? (
-          <section id="alerts-popover" className="absolute right-0 mt-3 w-[min(22rem,calc(100vw-2rem))] origin-top-right overflow-hidden rounded-2xl border border-borderdef bg-surface shadow-pop animate-popover-in" aria-label="Últimas alertas pendientes">
+          <section id="alerts-popover" className="absolute right-0 mt-3 w-[min(22rem,calc(100vw-2rem))] origin-top-right max-sm:fixed max-sm:inset-x-4 max-sm:top-[4.5rem] max-sm:mt-0 max-sm:w-auto overflow-hidden rounded-2xl border border-borderdef bg-surface shadow-pop animate-popover-in" aria-label="Últimas alertas pendientes">
             <div className="flex items-center justify-between border-b border-borderdef px-4 py-3">
               <h2 className="font-semibold text-txtprimary">Alertas pendientes</h2>
               <span className="rounded-full bg-danger/10 px-2 py-0.5 text-xs font-semibold tabular-nums text-danger-fg">{pendingCount}</span>

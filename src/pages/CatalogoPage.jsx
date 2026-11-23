@@ -244,7 +244,7 @@ export default function CatalogoPage() {
                 {categorias.map((categoria) => <option key={categoria.id} value={categoria.id}>{categoria.nombre}{categoria.activo ? '' : ' (inactiva)'}</option>)}
               </select>
             </div>
-            <label className={`inline-flex min-h-10 shrink-0 cursor-pointer items-center gap-2.5 rounded-xl border px-3.5 text-sm font-medium transition-colors ${mostrarInactivos.productos ? 'border-brand/40 bg-brand/10 text-brand' : 'border-borderdef text-txtsecondary hover:text-txtprimary'}`}>
+            <label className={`inline-flex min-h-10 shrink-0 cursor-pointer items-center gap-2.5 rounded-xl border px-3.5 text-sm font-medium transition-colors ${mostrarInactivos.productos ? 'border-brand/40 bg-brand/10 text-brand-fg' : 'border-borderdef text-txtsecondary hover:text-txtprimary'}`}>
               <input type="checkbox" className="h-4 w-4 accent-brand" checked={mostrarInactivos.productos} onChange={() => alternarInactivos('productos')} />
               Incluir desactivados
             </label>
@@ -306,7 +306,7 @@ export default function CatalogoPage() {
               <Search className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-txtsecondary" size={17} aria-hidden="true" />
               <input id="buscar-categoria" type="search" className="control pl-10" placeholder="Buscar categoría" value={busquedaCategoria} onChange={(event) => setBusquedaCategoria(event.target.value)} />
             </div>
-            <label className={`inline-flex min-h-10 shrink-0 cursor-pointer items-center gap-2.5 rounded-xl border px-3.5 text-sm font-medium transition-colors ${mostrarInactivos.categorias ? 'border-brand/40 bg-brand/10 text-brand' : 'border-borderdef text-txtsecondary hover:text-txtprimary'}`}>
+            <label className={`inline-flex min-h-10 shrink-0 cursor-pointer items-center gap-2.5 rounded-xl border px-3.5 text-sm font-medium transition-colors ${mostrarInactivos.categorias ? 'border-brand/40 bg-brand/10 text-brand-fg' : 'border-borderdef text-txtsecondary hover:text-txtprimary'}`}>
               <input type="checkbox" className="h-4 w-4 accent-brand" checked={mostrarInactivos.categorias} onChange={() => alternarInactivos('categorias')} />
               Incluir desactivadas
             </label>

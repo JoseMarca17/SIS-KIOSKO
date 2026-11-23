@@ -17,6 +17,7 @@
 
   --brand-primary: 75 43 181;      /* #4B2BB5 */
   --brand-hover: 61 33 150;        /* #3D2196 */
+  --brand-fg: 75 43 181;          /* texto de marca sobre fondos suaves */
   --brand-solid: 75 43 181;        /* relleno con texto blanco */
   --brand-solid-hover: 61 33 150;
   --on-brand: 255 255 255;
@@ -63,6 +64,7 @@
 
   --brand-primary: 139 108 246;    /* #8B6CF6 */
   --brand-hover: 164 139 250;      /* #A48BFA */
+  --brand-fg: 164 139 250;         /* #A48BFA */
   --brand-solid: 109 79 224;       /* #6D4FE0: blanco encima ≥ 4.5:1 */
   --brand-solid-hover: 91 61 212;  /* #5B3DD4 */
   --on-brand: 255 255 255;

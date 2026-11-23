@@ -4,7 +4,7 @@ const variants = {
   danger: 'bg-danger/10 text-danger-fg ring-danger/25',
   info: 'bg-info/10 text-info-fg ring-info/25',
   accent: 'bg-accent/15 text-accent-fg ring-accent/30',
-  neutral: 'bg-brand/10 text-brand ring-brand/25',
+  neutral: 'bg-brand/10 text-brand-fg ring-brand/25',
   muted: 'bg-subtle text-txtsecondary ring-borderdef',
 };
 

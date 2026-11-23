@@ -197,7 +197,7 @@ export default function DashboardPage() {
 
           <section className="card p-5 animate-fade-up" style={stagger(6, 60)}>
             <div className="flex items-center gap-2">
-              <span className="rounded-lg bg-brand/10 p-1.5 text-brand" aria-hidden="true"><PieChart size={16} /></span>
+              <span className="rounded-lg bg-brand/10 p-1.5 text-brand-fg" aria-hidden="true"><PieChart size={16} /></span>
               <div>
                 <h2 className="font-semibold">Valor por categoría</h2>
                 <p className="text-xs text-txtsecondary">Stock vigente valorizado</p>

@@ -21,7 +21,7 @@ const formatoMoneda = new Intl.NumberFormat('es-BO', { style: 'currency', curren
 const clavesProveedores = ['productos', 'categorias', 'proveedores', 'producto-proveedor', 'productos-stock', 'stock'];
 
 // Color de avatar estable por nombre (solo visual).
-const AVATAR_TONES = ['bg-brand/10 text-brand', 'bg-accent/15 text-accent-fg', 'bg-ok/10 text-ok-fg', 'bg-info/10 text-info-fg', 'bg-danger/10 text-danger-fg'];
+const AVATAR_TONES = ['bg-brand/10 text-brand-fg', 'bg-accent/15 text-accent-fg', 'bg-ok/10 text-ok-fg', 'bg-info/10 text-info-fg', 'bg-danger/10 text-danger-fg'];
 const avatarTone = (nombre = '') => AVATAR_TONES[[...nombre].reduce((hash, char) => (hash * 31 + char.charCodeAt(0)) >>> 0, 7) % AVATAR_TONES.length];
 
 function ProveedorForm({ proveedor, onSubmit, onClose, mutation }) {
@@ -257,7 +257,7 @@ export default function ProveedoresPage() {
           <Search className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-txtsecondary" size={17} aria-hidden="true" />
           <input id="buscar-proveedor" type="search" className="control pl-10" placeholder="Buscar por nombre, NIT/CI, teléfono o email" value={busqueda} onChange={(event) => setBusqueda(event.target.value)} />
         </div>
-        <label className={`inline-flex min-h-10 shrink-0 cursor-pointer items-center gap-2.5 rounded-xl border px-3.5 text-sm font-medium transition-colors ${mostrarInactivos ? 'border-brand/40 bg-brand/10 text-brand' : 'border-borderdef text-txtsecondary hover:text-txtprimary'}`}>
+        <label className={`inline-flex min-h-10 shrink-0 cursor-pointer items-center gap-2.5 rounded-xl border px-3.5 text-sm font-medium transition-colors ${mostrarInactivos ? 'border-brand/40 bg-brand/10 text-brand-fg' : 'border-borderdef text-txtsecondary hover:text-txtprimary'}`}>
           <input type="checkbox" className="h-4 w-4 accent-brand" checked={mostrarInactivos} onChange={() => setMostrarInactivos((actual) => !actual)} />
           Incluir desactivados
         </label>
@@ -303,7 +303,7 @@ export default function ProveedoresPage() {
                     {nombresAsociados.length ? (
                       <div className="mt-2 flex flex-wrap gap-1.5">
                         {nombresAsociados.slice(0, 4).map((nombre) => <span key={nombre} className="rounded-full bg-surface px-2.5 py-1 text-xs font-medium text-txtprimary ring-1 ring-inset ring-borderdef">{nombre}</span>)}
-                        {nombresAsociados.length > 4 ? <span className="rounded-full bg-brand/10 px-2.5 py-1 text-xs font-semibold text-brand" title={nombresAsociados.slice(4).join(', ')}>+{nombresAsociados.length - 4}</span> : null}
+                        {nombresAsociados.length > 4 ? <span className="rounded-full bg-brand/10 px-2.5 py-1 text-xs font-semibold text-brand-fg" title={nombresAsociados.slice(4).join(', ')}>+{nombresAsociados.length - 4}</span> : null}
                       </div>
                     ) : <p className="mt-1.5 text-sm text-txtsecondary">Ninguno todavía</p>}
                     {vinculosQuery.isError ? <p className="mt-1 text-xs text-danger-fg">No se pudieron cargar los vínculos.</p> : null}

@@ -77,7 +77,7 @@ export default function InventarioPage() {
 
       <section className="card overflow-hidden animate-fade-up" style={stagger(1, 60)} aria-busy={inventario.isLoading}>
         <div className="flex items-center justify-between border-b border-borderdef px-5 py-3.5">
-          <p className="text-sm font-semibold">Inventario vigente <span className="ml-1.5 rounded-full bg-brand/10 px-2 py-0.5 text-xs font-bold tabular-nums text-brand">{filas.length}</span></p>
+          <p className="text-sm font-semibold">Inventario vigente <span className="ml-1.5 rounded-full bg-brand/10 px-2 py-0.5 text-xs font-bold tabular-nums text-brand-fg">{filas.length}</span></p>
           <p className="hidden text-xs text-txtsecondary sm:block">La marca en la barra indica el stock mínimo</p>
         </div>
         {inventario.isLoading ? (

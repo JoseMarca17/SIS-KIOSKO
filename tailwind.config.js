@@ -18,6 +18,7 @@ export default {
         txtsecondary: token('--text-secondary'),
         brand: token('--brand-primary'),
         'brand-hover': token('--brand-hover'),
+        'brand-fg': token('--brand-fg'),
         'brand-solid': token('--brand-solid'),
         'brand-solid-hover': token('--brand-solid-hover'),
         'on-brand': token('--on-brand'),

@@ -48,7 +48,7 @@ export const ALERT_TONE = {
 
 /** Clases completas por tono (escritas enteras para que Tailwind las detecte). */
 export const TONE_CLASSES = {
-  brand: { dot: 'bg-brand', bar: 'bg-brand', soft: 'bg-brand/10 text-brand', text: 'text-brand', badge: 'neutral' },
+  brand: { dot: 'bg-brand', bar: 'bg-brand', soft: 'bg-brand/10 text-brand-fg', text: 'text-brand', badge: 'neutral' },
   accent: { dot: 'bg-accent', bar: 'bg-accent', soft: 'bg-accent/15 text-accent-fg', text: 'text-accent-fg', badge: 'accent' },
   ok: { dot: 'bg-ok', bar: 'bg-ok', soft: 'bg-ok/10 text-ok-fg', text: 'text-ok-fg', badge: 'success' },
   warn: { dot: 'bg-warn', bar: 'bg-warn', soft: 'bg-warn/10 text-warn-fg', text: 'text-warn-fg', badge: 'warning' },
