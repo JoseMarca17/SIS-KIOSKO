@@ -8,6 +8,10 @@ import { toast } from 'sonner';
 import Badge from '../components/ui/Badge';
 import Modal from '../components/ui/Modal';
 import Skeleton from '../components/ui/Skeleton';
+import ActionMenu from '../components/ui/ActionMenu';
+import PageHeader from '../components/ui/PageHeader';
+import { getInitials } from '../utils/format';
+import { stagger } from '../utils/motion';
 import { FieldError, FormActions, MutationError } from '../components/ui/forms';
 import EmptyState from '../components/ui/EmptyState';
 import { listUsuarios, mutateUsuario } from '../services/usuarios.service';
@@ -150,17 +154,19 @@ export default function UsuariosPage() {
 
   return (
     <div className="space-y-6">
-      <section className="card flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-lg font-semibold text-txtprimary">Gestión de usuarios</h2>
-          <p className="mt-1 text-sm text-txtsecondary">Administra accesos, roles y estado de las cuentas.</p>
-        </div>
-        <button type="button" className="btn-primary shrink-0" onClick={() => openDialog('create')}>
-          <Plus size={18} aria-hidden="true" /> Nuevo usuario
-        </button>
-      </section>
+      <PageHeader
+        className="animate-fade-up"
+        countLabel="Usuarios"
+        count={usuarios?.length ?? 0}
+        description="Administra accesos, roles y estado de las cuentas."
+        actions={(
+          <button type="button" className="btn-primary shrink-0" onClick={() => openDialog('create')}>
+            <Plus size={18} aria-hidden="true" /> Nuevo usuario
+          </button>
+        )}
+      />
 
-      <section className="card overflow-hidden" aria-busy={isLoading} aria-label="Listado de usuarios">
+      <section className="card overflow-hidden animate-fade-up" style={stagger(1, 60)} aria-busy={isLoading} aria-label="Listado de usuarios">
         {isLoading ? (
           <div className="space-y-4 p-6">{[1, 2, 3, 4].map((row) => <Skeleton key={row} className="h-12" label="Cargando usuarios" />)}</div>
         ) : isError ? (
@@ -169,48 +175,60 @@ export default function UsuariosPage() {
             <p className="mt-1 text-sm text-txtsecondary">{error.message}</p>
           </div>
         ) : usuarios?.length ? (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[760px] text-left text-sm">
+          <div className="table-wrap">
+            <table className="data-table min-w-[760px]">
               <caption className="sr-only">Usuarios registrados en KioskoControl</caption>
-              <thead className="bg-subtle text-xs uppercase tracking-wide text-txtsecondary">
+              <thead>
                 <tr>
-                  <th scope="col" className="px-5 py-3.5 font-semibold">Usuario</th>
-                  <th scope="col" className="px-5 py-3.5 font-semibold">Acceso</th>
-                  <th scope="col" className="px-5 py-3.5 font-semibold">Rol</th>
-                  <th scope="col" className="px-5 py-3.5 font-semibold">Estado</th>
-                  <th scope="col" className="px-5 py-3.5 font-semibold">Creado</th>
-                  <th scope="col" className="px-5 py-3.5 text-right font-semibold">Acciones</th>
+                  <th scope="col">Usuario</th>
+                  <th scope="col">Acceso</th>
+                  <th scope="col">Rol</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">Creado</th>
+                  <th scope="col" className="text-right">Acciones</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-borderdef">
-                {usuarios.map((usuario) => (
-                  <tr key={usuario.id} className="hover:bg-subtle">
-                    <td className="px-5 py-4">
-                      <div className="flex items-center gap-3">
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand/10 font-semibold text-brand">{usuario.nombre_completo.split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase()}</span>
-                        <span className="font-medium text-txtprimary">{usuario.nombre_completo}</span>
-                      </div>
-                    </td>
-                    <td className="px-5 py-4 text-txtsecondary">{usuario.usuario_login}</td>
-                    <td className="px-5 py-4"><Badge variant={usuario.rol === 'ADMIN' ? 'info' : 'neutral'}>{usuario.rol === 'ADMIN' ? 'Administrador' : 'Personal'}</Badge></td>
-                    <td className="px-5 py-4"><Badge variant={usuario.activo ? 'success' : 'danger'}>{usuario.activo ? 'Activo' : 'Inactivo'}</Badge></td>
-                    <td className="px-5 py-4 text-txtsecondary">{new Intl.DateTimeFormat('es', { dateStyle: 'medium' }).format(new Date(usuario.creado_en))}</td>
-                    <td className="px-5 py-4">
-                      <div className="flex justify-end gap-2">
-                        <button type="button" className="icon-button h-9 w-9" onClick={() => openDialog('edit', usuario)} aria-label={`Editar a ${usuario.nombre_completo}`}><Pencil size={16} aria-hidden="true" /></button>
-                        <button type="button" className="icon-button h-9 w-9" onClick={() => openDialog('reset', usuario)} aria-label={`Restablecer contraseña de ${usuario.nombre_completo}`}><KeyRound size={16} aria-hidden="true" /></button>
-                        <button type="button" className="icon-button h-9 w-9" onClick={() => openDialog('toggle', usuario)} disabled={usuario.id === currentUserId} title={usuario.id === currentUserId ? 'No puedes cambiar tu propio estado' : ''} aria-label={`${usuario.activo ? 'Desactivar' : 'Activar'} a ${usuario.nombre_completo}`}>
-                          {usuario.activo ? <UserRoundX size={17} aria-hidden="true" /> : <UserCheck size={17} aria-hidden="true" />}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+              <tbody>
+                {usuarios.map((usuario, index) => {
+                  const esAdmin = usuario.rol === 'ADMIN';
+                  const esYo = usuario.id === currentUserId;
+                  return (
+                    <tr key={usuario.id} className={`animate-fade-up ${usuario.activo ? '' : 'opacity-70'}`} style={stagger(index)}>
+                      <td>
+                        <div className="flex items-center gap-3">
+                          <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold ${esAdmin ? 'bg-info/10 text-info-fg' : 'bg-ok/10 text-ok-fg'}`} aria-hidden="true">{getInitials(usuario.nombre_completo)}</span>
+                          <div className="min-w-0">
+                            <p className="truncate font-medium text-txtprimary">{usuario.nombre_completo}</p>
+                            {esYo ? <p className="text-xs font-semibold text-brand">Tu cuenta</p> : null}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="font-mono text-xs text-txtsecondary">{usuario.usuario_login}</td>
+                      <td><Badge variant={esAdmin ? 'info' : 'success'}>{esAdmin ? 'Administrador' : 'Personal'}</Badge></td>
+                      <td><Badge variant={usuario.activo ? 'success' : 'muted'} dot>{usuario.activo ? 'Activo' : 'Inactivo'}</Badge></td>
+                      <td className="whitespace-nowrap text-txtsecondary">{new Intl.DateTimeFormat('es', { dateStyle: 'medium' }).format(new Date(usuario.creado_en))}</td>
+                      <td>
+                        <div className="flex justify-end">
+                          <ActionMenu
+                            label={`Acciones para ${usuario.nombre_completo}`}
+                            items={[
+                              { label: 'Editar', icon: Pencil, onClick: () => openDialog('edit', usuario) },
+                              { label: 'Restablecer contraseña', icon: KeyRound, onClick: () => openDialog('reset', usuario) },
+                              usuario.activo
+                                ? { label: esYo ? 'Desactivar (tu cuenta)' : 'Desactivar', icon: UserRoundX, danger: true, disabled: esYo, onClick: () => openDialog('toggle', usuario) }
+                                : { label: 'Activar', icon: UserCheck, disabled: esYo, onClick: () => openDialog('toggle', usuario) },
+                            ]}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
         ) : (
-          <EmptyState icon={UsersRound} title="No hay usuarios" description="Crea el primer usuario para asignarle acceso." action={<button type="button" className="btn-primary" onClick={() => openDialog('create')}><Plus size={18} /> Nuevo usuario</button>} />
+          <EmptyState icon={UsersRound} title="No hay usuarios" description="Crea el primer usuario para asignarle acceso." action={<button type="button" className="btn-primary" onClick={() => openDialog('create')}><Plus size={18} aria-hidden="true" /> Nuevo usuario</button>} />
         )}
       </section>
 

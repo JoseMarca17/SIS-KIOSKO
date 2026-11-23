@@ -2,12 +2,16 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Layers3, LoaderCircle, PackageCheck, PackageOpen, PackageX, Pencil, Plus, Search, Tags } from 'lucide-react';
+import { Eye, EyeOff, Layers3, LoaderCircle, PackageCheck, PackageOpen, PackageX, Pencil, Plus, Search, Tags } from 'lucide-react';
 import { toast } from 'sonner';
 import Badge from '../components/ui/Badge';
 import EmptyState from '../components/ui/EmptyState';
 import Modal from '../components/ui/Modal';
 import Skeleton from '../components/ui/Skeleton';
+import ActionMenu from '../components/ui/ActionMenu';
+import PageHeader from '../components/ui/PageHeader';
+import Tabs from '../components/ui/Tabs';
+import { stagger } from '../utils/motion';
 import { FieldError, FormActions, MutationError } from '../components/ui/forms';
 import { categoriaSchema, productoSchema } from '../schemas/catalogo.schemas';
 import { createCategoria, listCategorias, setCategoriaActiva, updateCategoria } from '../services/categorias.service';
@@ -194,83 +198,96 @@ export default function CatalogoPage() {
     descripcionModal = 'El registro se conservará en el historial; no se eliminará físicamente.';
   }
 
+  const actionsFor = (registro, tipoToggle, tipoEditar) => [
+    { label: 'Editar', icon: Pencil, onClick: () => abrirDialogo(tipoEditar, registro) },
+    registro.activo
+      ? { label: 'Desactivar', icon: tipoToggle === 'toggle-producto' ? PackageX : EyeOff, danger: true, onClick: () => abrirDialogo(tipoToggle, registro) }
+      : { label: 'Activar', icon: tipoToggle === 'toggle-producto' ? PackageCheck : Eye, onClick: () => abrirDialogo(tipoToggle, registro) },
+  ];
+
   return (
     <div className="space-y-6">
-      <section className="card flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-lg font-semibold text-txtprimary">Gestión de catálogo</h2>
-          <p className="mt-1 text-sm text-txtsecondary">Administra productos y categorías sin perder su historial.</p>
-        </div>
-        <button type="button" className="btn-primary shrink-0" onClick={() => abrirDialogo(tab === 'productos' ? 'producto' : 'categoria')}>
-          <Plus size={18} aria-hidden="true" /> {tab === 'productos' ? 'Nuevo producto' : 'Nueva categoría'}
-        </button>
-      </section>
+      <PageHeader
+        className="animate-fade-up"
+        countLabel={tab === 'productos' ? 'Productos' : 'Categorías'}
+        count={tab === 'productos' ? productosFiltrados.length : categoriasFiltradas.length}
+        description="Administra productos y categorías sin perder su historial."
+        actions={(
+          <button type="button" className="btn-primary shrink-0" onClick={() => abrirDialogo(tab === 'productos' ? 'producto' : 'categoria')}>
+            <Plus size={18} aria-hidden="true" /> {tab === 'productos' ? 'Nuevo producto' : 'Nueva categoría'}
+          </button>
+        )}
+      />
 
-      <div className="flex gap-2 rounded-2xl border border-borderdef bg-surface p-1.5" role="tablist" aria-label="Secciones del catálogo">
-        <button type="button" id="tab-productos" role="tab" aria-selected={tab === 'productos'} aria-controls="panel-productos" className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${tab === 'productos' ? 'bg-brand-solid text-on-brand' : 'text-txtsecondary hover:bg-subtle hover:text-txtprimary'}`} onClick={() => setTab('productos')}>
-          <PackageOpen className="mr-2 inline" size={17} aria-hidden="true" />Productos
-        </button>
-        <button type="button" id="tab-categorias" role="tab" aria-selected={tab === 'categorias'} aria-controls="panel-categorias" className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${tab === 'categorias' ? 'bg-brand-solid text-on-brand' : 'text-txtsecondary hover:bg-subtle hover:text-txtprimary'}`} onClick={() => setTab('categorias')}>
-          <Tags className="mr-2 inline" size={17} aria-hidden="true" />Categorías
-        </button>
-      </div>
+      <Tabs
+        ariaLabel="Secciones del catálogo"
+        value={tab}
+        onChange={setTab}
+        tabs={[
+          { value: 'productos', label: 'Productos', icon: PackageOpen, id: 'tab-productos', controls: 'panel-productos', count: productos.filter((p) => p.activo).length },
+          { value: 'categorias', label: 'Categorías', icon: Tags, tone: 'info', id: 'tab-categorias', controls: 'panel-categorias', count: categorias.filter((c) => c.activo).length },
+        ]}
+      />
 
       {tab === 'productos' ? (
-        <div id="panel-productos" role="tabpanel" aria-labelledby="tab-productos" className="space-y-4">
-          <section className="card grid gap-4 p-4 md:grid-cols-[minmax(0,1fr)_220px_auto] md:items-end" aria-label="Filtros de productos">
-            <div>
-              <label htmlFor="buscar-producto" className="mb-2 block text-sm font-medium">Buscar</label>
-              <div className="relative">
-                <Search className="pointer-events-none absolute left-3.5 top-3 text-txtsecondary" size={17} aria-hidden="true" />
-                <input id="buscar-producto" type="search" className="control pl-10" placeholder="Nombre o código de barras" value={busquedaProducto} onChange={(event) => setBusquedaProducto(event.target.value)} />
-              </div>
+        <div id="panel-productos" role="tabpanel" aria-labelledby="tab-productos" className="card overflow-hidden animate-fade-up">
+          <section className="flex flex-col gap-3 border-b border-borderdef p-4 md:flex-row md:items-center" aria-label="Filtros de productos">
+            <div className="relative flex-1">
+              <label htmlFor="buscar-producto" className="sr-only">Buscar</label>
+              <Search className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-txtsecondary" size={17} aria-hidden="true" />
+              <input id="buscar-producto" type="search" className="control pl-10" placeholder="Buscar por nombre o código de barras" value={busquedaProducto} onChange={(event) => setBusquedaProducto(event.target.value)} />
             </div>
-            <div>
-              <label htmlFor="filtro-categoria" className="mb-2 block text-sm font-medium">Categoría</label>
+            <div className="md:w-56">
+              <label htmlFor="filtro-categoria" className="sr-only">Categoría</label>
               <select id="filtro-categoria" className="control" value={categoriaFiltro} onChange={(event) => setCategoriaFiltro(event.target.value)}>
                 <option value="todas">Todas las categorías</option>
                 {categorias.map((categoria) => <option key={categoria.id} value={categoria.id}>{categoria.nombre}{categoria.activo ? '' : ' (inactiva)'}</option>)}
               </select>
             </div>
-            <label className="flex min-h-11 cursor-pointer items-center gap-2.5 rounded-xl px-1 text-sm font-medium">
+            <label className={`inline-flex min-h-10 shrink-0 cursor-pointer items-center gap-2.5 rounded-xl border px-3.5 text-sm font-medium transition-colors ${mostrarInactivos.productos ? 'border-brand/40 bg-brand/10 text-brand' : 'border-borderdef text-txtsecondary hover:text-txtprimary'}`}>
               <input type="checkbox" className="h-4 w-4 accent-brand" checked={mostrarInactivos.productos} onChange={() => alternarInactivos('productos')} />
               Incluir desactivados
             </label>
           </section>
 
-          <section className="card overflow-hidden" aria-busy={productosQuery.isLoading} aria-label="Listado de productos">
+          <section aria-busy={productosQuery.isLoading} aria-label="Listado de productos">
             {productosQuery.isLoading ? <LoadingRows label="Cargando productos" /> : productosQuery.isError ? <QueryError error={productosQuery.error} /> : productosFiltrados.length ? (
-              <div className="overflow-x-auto">
-                <table className="w-full min-w-[1080px] text-left text-sm">
+              <div className="table-wrap">
+                <table className="data-table min-w-[900px]">
                   <caption className="sr-only">Productos registrados y configuración de alertas</caption>
-                  <thead className="bg-subtle text-xs uppercase tracking-wide text-txtsecondary">
+                  <thead>
                     <tr>
-                      <th scope="col" className="px-5 py-3.5 font-semibold">Nombre</th>
-                      <th scope="col" className="px-5 py-3.5 font-semibold">Código</th>
-                      <th scope="col" className="px-5 py-3.5 font-semibold">Categoría</th>
-                      <th scope="col" className="px-5 py-3.5 font-semibold">Unidad</th>
-                      <th scope="col" className="px-5 py-3.5 font-semibold">Umbrales</th>
-                      <th scope="col" className="px-5 py-3.5 font-semibold">Días alerta</th>
-                      <th scope="col" className="px-5 py-3.5 font-semibold">Estado</th>
-                      <th scope="col" className="px-5 py-3.5 text-right font-semibold">Acciones</th>
+                      <th scope="col">Producto</th>
+                      <th scope="col">Categoría</th>
+                      <th scope="col">Unidad</th>
+                      <th scope="col">Umbrales</th>
+                      <th scope="col">Alerta de vencimiento</th>
+                      <th scope="col">Estado</th>
+                      <th scope="col" className="text-right">Acciones</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-borderdef">
-                    {productosFiltrados.map((producto) => (
-                      <tr key={producto.id} className="hover:bg-subtle">
-                        <td className="px-5 py-4 font-medium text-txtprimary">{producto.nombre}</td>
-                        <td className="px-5 py-4 text-txtsecondary">{producto.codigo_barras ?? '—'}</td>
-                        <td className="px-5 py-4 text-txtsecondary">{producto.categorias?.nombre ?? 'Sin categoría'}{producto.categorias && !producto.categorias.activo ? ' (inactiva)' : ''}</td>
-                        <td className="px-5 py-4 text-txtsecondary">{producto.unidad_medida}</td>
-                        <td className="whitespace-nowrap px-5 py-4 text-txtsecondary">Mín. {producto.stock_minimo} / Máx. {producto.stock_maximo}</td>
-                        <td className="px-5 py-4 text-txtsecondary">{producto.dias_alerta_vencimiento} días</td>
-                        <td className="px-5 py-4"><Badge variant={producto.activo ? 'success' : 'danger'}>{producto.activo ? 'Activo' : 'Inactivo'}</Badge></td>
-                        <td className="px-5 py-4">
-                          <div className="flex justify-end gap-2">
-                            <button type="button" className="icon-button h-9 w-9" onClick={() => abrirDialogo('producto', producto)} aria-label={`Editar ${producto.nombre}`}><Pencil size={16} aria-hidden="true" /></button>
-                            <button type="button" className="icon-button h-9 w-9" onClick={() => abrirDialogo('toggle-producto', producto)} aria-label={`${producto.activo ? 'Desactivar' : 'Activar'} ${producto.nombre}`}>
-                              {producto.activo ? <PackageX size={17} aria-hidden="true" /> : <PackageCheck size={17} aria-hidden="true" />}
-                            </button>
+                  <tbody>
+                    {productosFiltrados.map((producto, index) => (
+                      <tr key={producto.id} className={`animate-fade-up ${producto.activo ? '' : 'opacity-70'}`} style={stagger(index)}>
+                        <td>
+                          <p className="font-medium text-txtprimary">{producto.nombre}</p>
+                          <p className="font-mono text-xs text-txtsecondary">{producto.codigo_barras ?? 'Sin código'}</p>
+                        </td>
+                        <td className="text-txtsecondary">{producto.categorias?.nombre ?? 'Sin categoría'}{producto.categorias && !producto.categorias.activo ? ' (inactiva)' : ''}</td>
+                        <td className="text-txtsecondary">{producto.unidad_medida}</td>
+                        <td className="whitespace-nowrap">
+                          <span className="font-medium tabular-nums">{producto.stock_minimo} – {producto.stock_maximo}</span>
+                          <span className="block text-xs text-txtsecondary">mín. – máx.</span>
+                        </td>
+                        <td className="whitespace-nowrap">
+                          {Number(producto.dias_alerta_vencimiento) > 0
+                            ? <span className="tabular-nums">{producto.dias_alerta_vencimiento} días antes</span>
+                            : <span className="text-txtsecondary">Sin alerta</span>}
+                        </td>
+                        <td><Badge variant={producto.activo ? 'success' : 'muted'} dot>{producto.activo ? 'Activo' : 'Inactivo'}</Badge></td>
+                        <td>
+                          <div className="flex justify-end">
+                            <ActionMenu label={`Acciones para ${producto.nombre}`} items={actionsFor(producto, 'toggle-producto', 'producto')} />
                           </div>
                         </td>
                       </tr>
@@ -282,39 +299,43 @@ export default function CatalogoPage() {
           </section>
         </div>
       ) : (
-        <div id="panel-categorias" role="tabpanel" aria-labelledby="tab-categorias" className="space-y-4">
-          <section className="card grid gap-4 p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end" aria-label="Filtros de categorías">
-            <div>
-              <label htmlFor="buscar-categoria" className="mb-2 block text-sm font-medium">Buscar</label>
-              <div className="relative">
-                <Search className="pointer-events-none absolute left-3.5 top-3 text-txtsecondary" size={17} aria-hidden="true" />
-                <input id="buscar-categoria" type="search" className="control pl-10" placeholder="Nombre de la categoría" value={busquedaCategoria} onChange={(event) => setBusquedaCategoria(event.target.value)} />
-              </div>
+        <div id="panel-categorias" role="tabpanel" aria-labelledby="tab-categorias" className="card overflow-hidden animate-fade-up">
+          <section className="flex flex-col gap-3 border-b border-borderdef p-4 sm:flex-row sm:items-center" aria-label="Filtros de categorías">
+            <div className="relative flex-1">
+              <label htmlFor="buscar-categoria" className="sr-only">Buscar</label>
+              <Search className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-txtsecondary" size={17} aria-hidden="true" />
+              <input id="buscar-categoria" type="search" className="control pl-10" placeholder="Buscar categoría" value={busquedaCategoria} onChange={(event) => setBusquedaCategoria(event.target.value)} />
             </div>
-            <label className="flex min-h-11 cursor-pointer items-center gap-2.5 rounded-xl px-1 text-sm font-medium">
+            <label className={`inline-flex min-h-10 shrink-0 cursor-pointer items-center gap-2.5 rounded-xl border px-3.5 text-sm font-medium transition-colors ${mostrarInactivos.categorias ? 'border-brand/40 bg-brand/10 text-brand' : 'border-borderdef text-txtsecondary hover:text-txtprimary'}`}>
               <input type="checkbox" className="h-4 w-4 accent-brand" checked={mostrarInactivos.categorias} onChange={() => alternarInactivos('categorias')} />
               Incluir desactivadas
             </label>
           </section>
 
-          <section className="card overflow-hidden" aria-busy={categoriasQuery.isLoading} aria-label="Listado de categorías">
+          <section aria-busy={categoriasQuery.isLoading} aria-label="Listado de categorías">
             {categoriasQuery.isLoading ? <LoadingRows label="Cargando categorías" /> : categoriasQuery.isError ? <QueryError error={categoriasQuery.error} /> : categoriasFiltradas.length ? (
-              <div className="overflow-x-auto">
-                <table className="w-full min-w-[560px] text-left text-sm">
+              <div className="table-wrap">
+                <table className="data-table min-w-[520px]">
                   <caption className="sr-only">Categorías del catálogo</caption>
-                  <thead className="bg-subtle text-xs uppercase tracking-wide text-txtsecondary">
+                  <thead>
                     <tr>
-                      <th scope="col" className="px-5 py-3.5 font-semibold">Nombre</th>
-                      <th scope="col" className="px-5 py-3.5 font-semibold">Estado</th>
-                      <th scope="col" className="px-5 py-3.5 text-right font-semibold">Acciones</th>
+                      <th scope="col">Nombre</th>
+                      <th scope="col">Productos</th>
+                      <th scope="col">Estado</th>
+                      <th scope="col" className="text-right">Acciones</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-borderdef">
-                    {categoriasFiltradas.map((categoria) => (
-                      <tr key={categoria.id} className="hover:bg-subtle">
-                        <td className="px-5 py-4"><span className="flex items-center gap-3 font-medium text-txtprimary"><span className="rounded-xl bg-info/10 p-2 text-info-fg"><Layers3 size={17} aria-hidden="true" /></span>{categoria.nombre}</span></td>
-                        <td className="px-5 py-4"><Badge variant={categoria.activo ? 'success' : 'danger'}>{categoria.activo ? 'Activa' : 'Inactiva'}</Badge></td>
-                        <td className="px-5 py-4"><div className="flex justify-end gap-2"><button type="button" className="icon-button h-9 w-9" onClick={() => abrirDialogo('categoria', categoria)} aria-label={`Editar ${categoria.nombre}`}><Pencil size={16} aria-hidden="true" /></button><button type="button" className="btn-secondary" onClick={() => abrirDialogo('toggle-categoria', categoria)}>{categoria.activo ? 'Desactivar' : 'Activar'}</button></div></td>
+                  <tbody>
+                    {categoriasFiltradas.map((categoria, index) => (
+                      <tr key={categoria.id} className={`animate-fade-up ${categoria.activo ? '' : 'opacity-70'}`} style={stagger(index)}>
+                        <td><span className="flex items-center gap-3 font-medium text-txtprimary"><span className="rounded-xl bg-info/10 p-2 text-info-fg"><Layers3 size={17} aria-hidden="true" /></span>{categoria.nombre}</span></td>
+                        <td className="tabular-nums text-txtsecondary">{productos.filter((p) => p.categoria_id === categoria.id).length}</td>
+                        <td><Badge variant={categoria.activo ? 'success' : 'muted'} dot>{categoria.activo ? 'Activa' : 'Inactiva'}</Badge></td>
+                        <td>
+                          <div className="flex justify-end">
+                            <ActionMenu label={`Acciones para ${categoria.nombre}`} items={actionsFor(categoria, 'toggle-categoria', 'categoria')} />
+                          </div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>

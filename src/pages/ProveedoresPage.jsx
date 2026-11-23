@@ -8,6 +8,10 @@ import Badge from '../components/ui/Badge';
 import EmptyState from '../components/ui/EmptyState';
 import Modal from '../components/ui/Modal';
 import Skeleton from '../components/ui/Skeleton';
+import ActionMenu from '../components/ui/ActionMenu';
+import PageHeader from '../components/ui/PageHeader';
+import { getInitials } from '../utils/format';
+import { stagger } from '../utils/motion';
 import { FieldError, FormActions, MutationError } from '../components/ui/forms';
 import { productoProveedorSchema, proveedorSchema } from '../schemas/catalogo.schemas';
 import { listProductos } from '../services/productos.service';
@@ -15,6 +19,10 @@ import { createProveedor, listProductoProveedor, listProveedores, setProveedorAc
 
 const formatoMoneda = new Intl.NumberFormat('es-BO', { style: 'currency', currency: 'BOB' });
 const clavesProveedores = ['productos', 'categorias', 'proveedores', 'producto-proveedor', 'productos-stock', 'stock'];
+
+// Color de avatar estable por nombre (solo visual).
+const AVATAR_TONES = ['bg-brand/10 text-brand', 'bg-accent/15 text-accent-fg', 'bg-ok/10 text-ok-fg', 'bg-info/10 text-info-fg', 'bg-danger/10 text-danger-fg'];
+const avatarTone = (nombre = '') => AVATAR_TONES[[...nombre].reduce((hash, char) => (hash * 31 + char.charCodeAt(0)) >>> 0, 7) % AVATAR_TONES.length];
 
 function ProveedorForm({ proveedor, onSubmit, onClose, mutation }) {
   const { register, handleSubmit, formState: { errors } } = useForm({
@@ -235,58 +243,72 @@ export default function ProveedoresPage() {
 
   return (
     <div className="space-y-6">
-      <section className="card flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-lg font-semibold text-txtprimary">Gestión de proveedores</h2>
-          <p className="mt-1 text-sm text-txtsecondary">Administra contactos, productos asociados y condiciones de adquisición.</p>
-        </div>
-        <button type="button" className="btn-primary shrink-0" onClick={() => abrirDialogo('proveedor')}><Plus size={18} aria-hidden="true" /> Nuevo proveedor</button>
-      </section>
+      <PageHeader
+        className="animate-fade-up"
+        countLabel="Proveedores"
+        count={proveedoresFiltrados.length}
+        description="Administra contactos, productos asociados y condiciones de adquisición."
+        actions={<button type="button" className="btn-primary shrink-0" onClick={() => abrirDialogo('proveedor')}><Plus size={18} aria-hidden="true" /> Nuevo proveedor</button>}
+      />
 
-      <section className="card grid gap-4 p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end" aria-label="Filtros de proveedores">
-        <div>
-          <label htmlFor="buscar-proveedor" className="mb-2 block text-sm font-medium">Buscar</label>
-          <div className="relative">
-            <Search className="pointer-events-none absolute left-3.5 top-3 text-txtsecondary" size={17} aria-hidden="true" />
-            <input id="buscar-proveedor" type="search" className="control pl-10" placeholder="Nombre, NIT/CI, teléfono o email" value={busqueda} onChange={(event) => setBusqueda(event.target.value)} />
-          </div>
+      <section className="card flex flex-col gap-3 p-4 sm:flex-row sm:items-center animate-fade-up" style={stagger(1, 60)} aria-label="Filtros de proveedores">
+        <div className="relative flex-1">
+          <label htmlFor="buscar-proveedor" className="sr-only">Buscar</label>
+          <Search className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-txtsecondary" size={17} aria-hidden="true" />
+          <input id="buscar-proveedor" type="search" className="control pl-10" placeholder="Buscar por nombre, NIT/CI, teléfono o email" value={busqueda} onChange={(event) => setBusqueda(event.target.value)} />
         </div>
-        <label className="flex min-h-11 cursor-pointer items-center gap-2.5 rounded-xl px-1 text-sm font-medium">
+        <label className={`inline-flex min-h-10 shrink-0 cursor-pointer items-center gap-2.5 rounded-xl border px-3.5 text-sm font-medium transition-colors ${mostrarInactivos ? 'border-brand/40 bg-brand/10 text-brand' : 'border-borderdef text-txtsecondary hover:text-txtprimary'}`}>
           <input type="checkbox" className="h-4 w-4 accent-brand" checked={mostrarInactivos} onChange={() => setMostrarInactivos((actual) => !actual)} />
           Incluir desactivados
         </label>
       </section>
 
       <section aria-busy={proveedoresQuery.isLoading} aria-label="Listado de proveedores">
-        {proveedoresQuery.isLoading ? <div className="grid gap-4 lg:grid-cols-2">{[1, 2, 3, 4].map((tarjeta) => <Skeleton key={tarjeta} className="h-64 rounded-2xl" label="Cargando proveedores" />)}</div> : proveedoresQuery.isError ? (
+        {proveedoresQuery.isLoading ? <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{[1, 2, 3].map((tarjeta) => <Skeleton key={tarjeta} className="h-64" label="Cargando proveedores" />)}</div> : proveedoresQuery.isError ? (
           <div className="card p-6" role="alert"><p className="font-semibold text-danger-fg">No se pudo cargar el listado.</p><p className="mt-1 text-sm text-txtsecondary">{proveedoresQuery.error.message}</p></div>
         ) : proveedoresFiltrados.length ? (
-          <div className="grid gap-4 lg:grid-cols-2">
-            {proveedoresFiltrados.map((proveedor) => {
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {proveedoresFiltrados.map((proveedor, index) => {
               const productosAsociados = vinculos.filter((vinculo) => vinculo.proveedor_id === proveedor.id);
+              const nombresAsociados = productosAsociados.map((vinculo) => vinculo.productos?.nombre ?? `Producto ${vinculo.producto_id}`);
               return (
-                <article key={proveedor.id} className="card flex flex-col p-5">
-                  <div className="flex items-start justify-between gap-4">
+                <article key={proveedor.id} className={`card flex h-full flex-col p-5 transition-[transform,box-shadow] duration-300 ease-out-expo hover:-translate-y-0.5 hover:shadow-card-hover animate-fade-up ${proveedor.activo ? '' : 'opacity-75'}`} style={stagger(index)}>
+                  <div className="flex items-start justify-between gap-3">
                     <div className="flex min-w-0 items-center gap-3">
-                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand/10 text-brand"><Truck size={21} aria-hidden="true" /></span>
-                      <div className="min-w-0"><h3 className="truncate font-semibold text-txtprimary">{proveedor.nombre}</h3><p className="mt-0.5 text-sm text-txtsecondary">NIT/CI: {proveedor.nit_ci ?? 'No registrado'}</p></div>
+                      <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-sm font-bold ${avatarTone(proveedor.nombre)}`} aria-hidden="true">{getInitials(proveedor.nombre)}</span>
+                      <div className="min-w-0">
+                        <h3 className="truncate font-semibold text-txtprimary" title={proveedor.nombre}>{proveedor.nombre}</h3>
+                        <p className="mt-0.5 text-xs text-txtsecondary">NIT/CI: {proveedor.nit_ci ?? 'No registrado'}</p>
+                      </div>
                     </div>
-                    <Badge variant={proveedor.activo ? 'success' : 'danger'}>{proveedor.activo ? 'Activo' : 'Inactivo'}</Badge>
+                    <div className="flex shrink-0 items-center gap-1">
+                      <Badge variant={proveedor.activo ? 'success' : 'muted'} dot>{proveedor.activo ? 'Activo' : 'Inactivo'}</Badge>
+                      <ActionMenu
+                        label={`Acciones para ${proveedor.nombre}`}
+                        items={[
+                          { label: 'Editar', icon: Pencil, onClick: () => abrirDialogo('proveedor', proveedor) },
+                          proveedor.activo
+                            ? { label: 'Desactivar', icon: UserRoundX, danger: true, onClick: () => abrirDialogo('toggle', proveedor) }
+                            : { label: 'Activar', icon: UserCheck, onClick: () => abrirDialogo('toggle', proveedor) },
+                        ]}
+                      />
+                    </div>
                   </div>
                   <div className="mt-4 space-y-2 text-sm text-txtsecondary">
-                    <p className="flex items-center gap-2"><Phone size={16} className="shrink-0" aria-hidden="true" />{proveedor.telefono}</p>
-                    <p className="flex items-center gap-2 break-all"><Mail size={16} className="shrink-0" aria-hidden="true" />{proveedor.email ?? 'Email no registrado'}</p>
+                    <p className="flex items-center gap-2"><Phone size={15} className="shrink-0" aria-hidden="true" />{proveedor.telefono}</p>
+                    <p className="flex items-center gap-2 break-all"><Mail size={15} className="shrink-0" aria-hidden="true" />{proveedor.email ?? 'Email no registrado'}</p>
                   </div>
-                  <div className="mt-4 flex-1 rounded-xl bg-subtle p-3">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-txtsecondary">Productos asociados</p>
-                    <p className="mt-1.5 text-sm text-txtprimary">{productosAsociados.length ? productosAsociados.map((vinculo) => vinculo.productos?.nombre ?? `Producto ${vinculo.producto_id}`).join(', ') : 'Ninguno todavía'}</p>
+                  <div className="mt-4 flex-1 rounded-xl bg-subtle/70 p-3">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-txtsecondary">Productos asociados · {productosAsociados.length}</p>
+                    {nombresAsociados.length ? (
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        {nombresAsociados.slice(0, 4).map((nombre) => <span key={nombre} className="rounded-full bg-surface px-2.5 py-1 text-xs font-medium text-txtprimary ring-1 ring-inset ring-borderdef">{nombre}</span>)}
+                        {nombresAsociados.length > 4 ? <span className="rounded-full bg-brand/10 px-2.5 py-1 text-xs font-semibold text-brand" title={nombresAsociados.slice(4).join(', ')}>+{nombresAsociados.length - 4}</span> : null}
+                      </div>
+                    ) : <p className="mt-1.5 text-sm text-txtsecondary">Ninguno todavía</p>}
                     {vinculosQuery.isError ? <p className="mt-1 text-xs text-danger-fg">No se pudieron cargar los vínculos.</p> : null}
                   </div>
-                  <div className="mt-4 flex flex-wrap justify-end gap-2">
-                    <button type="button" className="btn-secondary" onClick={() => abrirDialogo('vinculos', proveedor)} disabled={productosQuery.isLoading || productosQuery.isError || vinculosQuery.isLoading || vinculosQuery.isError}><Link2 size={16} aria-hidden="true" /> Productos</button>
-                    <button type="button" className="icon-button h-10 w-10" onClick={() => abrirDialogo('proveedor', proveedor)} aria-label={`Editar ${proveedor.nombre}`}><Pencil size={16} aria-hidden="true" /></button>
-                    <button type="button" className="icon-button h-10 w-10" onClick={() => abrirDialogo('toggle', proveedor)} aria-label={`${proveedor.activo ? 'Desactivar' : 'Activar'} ${proveedor.nombre}`}>{proveedor.activo ? <UserRoundX size={17} aria-hidden="true" /> : <UserCheck size={17} aria-hidden="true" />}</button>
-                  </div>
+                  <button type="button" className="btn-secondary mt-4 w-full" onClick={() => abrirDialogo('vinculos', proveedor)} disabled={productosQuery.isLoading || productosQuery.isError || vinculosQuery.isLoading || vinculosQuery.isError}><Link2 size={16} aria-hidden="true" /> Productos y condiciones</button>
                 </article>
               );
             })}
