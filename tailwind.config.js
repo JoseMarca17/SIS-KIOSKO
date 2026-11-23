@@ -39,6 +39,10 @@ export default {
         'sidebar-to': token('--sidebar-to'),
         'sidebar-text': token('--sidebar-text'),
         overlay: token('--overlay'),
+        'login-from': token('--login-from'),
+        'login-via': token('--login-via'),
+        'login-to': token('--login-to'),
+        'glow-lilac': token('--glow-lilac'),
         'chart-1': token('--chart-1'),
         'chart-2': token('--chart-2'),
         'chart-3': token('--chart-3'),
@@ -49,6 +53,7 @@ export default {
         card: 'var(--shadow-card)',
         'card-hover': 'var(--shadow-card-hover)',
         pop: 'var(--shadow-pop)',
+        login: '0 32px 80px -24px rgb(var(--login-to) / 0.65), 0 10px 28px -14px rgb(var(--sidebar-to) / 0.45)',
       },
       transitionTimingFunction: {
         'out-expo': 'cubic-bezier(0.22, 1, 0.36, 1)',
@@ -101,6 +106,14 @@ export default {
           from: { opacity: '0', transform: 'rotate(-90deg) scale(0.6)' },
           to: { opacity: '1', transform: 'rotate(0deg) scale(1)' },
         },
+        'drift-a': {
+          '0%, 100%': { transform: 'translate3d(0, 0, 0) scale(1)' },
+          '50%': { transform: 'translate3d(6vw, 5vh, 0) scale(1.12)' },
+        },
+        'drift-b': {
+          '0%, 100%': { transform: 'translate3d(0, 0, 0) scale(1)' },
+          '50%': { transform: 'translate3d(-5vw, -6vh, 0) scale(1.08)' },
+        },
         'slide-in-right': {
           from: { opacity: '0', transform: 'translateX(16px)' },
           to: { opacity: '1', transform: 'translateX(0)' },
@@ -122,6 +135,8 @@ export default {
         'draw-donut': 'draw-donut 900ms cubic-bezier(0.22, 1, 0.36, 1) both',
         'draw-line': 'draw-line 900ms cubic-bezier(0.22, 1, 0.36, 1) both',
         'spin-swap': 'spin-swap 320ms cubic-bezier(0.22, 1, 0.36, 1) both',
+        'drift-a': 'drift-a 10s ease-in-out infinite',
+        'drift-b': 'drift-b 11s ease-in-out infinite',
         'slide-in-right': 'slide-in-right 280ms cubic-bezier(0.22, 1, 0.36, 1) both',
       },
     },

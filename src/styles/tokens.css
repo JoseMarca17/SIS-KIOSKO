@@ -43,6 +43,12 @@
 
   --overlay: 30 24 56;             /* fondo de modales y cajón móvil */
 
+  /* Fondo del login: degradado 135° */
+  --login-from: 91 59 207;         /* #5B3BCF */
+  --login-via: 75 43 181;          /* brand */
+  --login-to: 42 22 112;           /* sidebar-to */
+  --glow-lilac: 164 139 250;       /* #A48BFA */
+
   --chart-1: 75 43 181;            /* morado */
   --chart-2: 245 165 36;           /* naranja */
   --chart-3: 22 160 133;           /* verde agua */
@@ -89,6 +95,11 @@
   --sidebar-text: 255 255 255;
 
   --overlay: 5 4 12;
+
+  --login-from: 42 26 110;         /* #2A1A6E */
+  --login-via: 27 17 80;           /* #1B1150 */
+  --login-to: 14 11 26;            /* bg-base */
+  --glow-lilac: 164 139 250;
 
   --chart-1: 139 108 246;
   --chart-2: 247 185 85;
