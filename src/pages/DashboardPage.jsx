@@ -10,4 +10,87 @@ import { listAlertas, sincronizarAlertas } from '../services/alertas.service';
 import { listKardex } from '../services/kardex.service';
 
 const money = new Intl.NumberFormat('es-BO', { style: 'currency', currency: 'BOB' });
-export default function DashboardPage() { const qc = useQueryClient(); const productos = useQuery({ queryKey: ['productos-stock'], queryFn: listInventario }); const alertas = useQuery({ queryKey: ['alertas'], queryFn: listAlertas }); const incidentes = useQuery({ queryKey: ['incidentes', true], queryFn: () => listIncidentes({ admin: true }) }); const kardex = useQuery({ queryKey: ['kardex'], queryFn: listKardex }); useEffect(() => { sincronizarAlertas().then(() => qc.invalidateQueries({ queryKey: ['alertas'] })).catch((e) => toast.error(e.message)); }, [qc]); const rows = productos.data ?? []; const activos = (alertas.data ?? []).filter((a) => !a.atendida); const bajas = rows.filter((p) => p.stock_bajo); const mes = new Date().toISOString().slice(0, 7); const mermas = (kardex.data ?? []).filter((m) => m.tipo === 'MERMA' && m.fecha_hora.startsWith(mes)).reduce((sum, m) => sum + Number(m.cantidad) * Number(m.lotes?.costo_unitario ?? 0), 0); const kpis = [['Valor vigente', money.format(rows.reduce((s, p) => s + Number(p.valor_inventario || 0), 0)), PackageSearch], ['Stock bajo', bajas.length, AlertTriangle], ['Incidentes pendientes', (incidentes.data ?? []).filter((i) => i.estado === 'PENDIENTE').length, ClipboardList], ['Mermas del mes', money.format(mermas), Bell]]; return <div className="space-y-6"><section><h2 className="text-2xl font-bold">Resumen operativo</h2><p className="mt-1 text-sm text-txtsecondary">Control de existencias y alertas del kiosko en tiempo real.</p></section><div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{kpis.map(([label, value, Icon]) => <article className="card p-5" key={label}><Icon className="text-brand" size={22}/><p className="mt-5 text-sm text-txtsecondary">{label}</p><p className="mt-1 text-2xl font-bold">{value}</p></article>)}</div><div className="grid gap-6 lg:grid-cols-2"><section className="card p-5"><div className="flex items-center justify-between"><h2 className="font-semibold">Alertas activas</h2><Badge variant="warning">{activos.length}</Badge></div>{activos.length ? <div className="mt-4 space-y-3">{activos.slice(0, 5).map((a) => <div className="rounded-xl bg-subtle p-3" key={a.id}><Badge variant={a.tipo === 'INCIDENTE' ? 'info' : a.tipo === 'VENCIDO' ? 'danger' : 'warning'}>{a.tipo}</Badge><p className="mt-2 text-sm">{a.mensaje}</p></div>)}</div> : <EmptyState icon={Bell} title="Sin alertas activas" description="El inventario no tiene alertas pendientes."/>}</section><section className="card p-5"><h2 className="font-semibold">Qué pedir hoy</h2>{bajas.length ? <div className="mt-4 space-y-3">{bajas.map((p) => <div className="flex items-center justify-between rounded-xl bg-subtle p-3" key={p.id}><div><p className="font-medium">{p.nombre}</p><p className="text-sm text-txtsecondary">Faltan {Math.max(0, p.stock_maximo - p.stock_disponible)} · {p.proveedor_principal_nombre ?? 'Sin proveedor'}</p></div><span className="font-semibold">{money.format(Math.max(0, p.stock_maximo - p.stock_disponible) * Number(p.costo_referencia || 0))}</span></div>)}</div> : <EmptyState icon={PackageSearch} title="Stock suficiente" description="No hay reposiciones urgentes."/>}</section></div></div>; }
+
+export default function DashboardPage() {
+  const qc = useQueryClient();
+  const productos = useQuery({ queryKey: ['productos-stock'], queryFn: listInventario });
+  const alertas = useQuery({ queryKey: ['alertas'], queryFn: listAlertas });
+  const incidentes = useQuery({ queryKey: ['incidentes', true], queryFn: () => listIncidentes({ admin: true }) });
+  const kardex = useQuery({ queryKey: ['kardex'], queryFn: listKardex });
+
+  useEffect(() => {
+    sincronizarAlertas()
+      .then(() => qc.invalidateQueries({ queryKey: ['alertas'] }))
+      .catch((e) => toast.error(e.message));
+  }, [qc]);
+
+  const rows = productos.data ?? [];
+  const activos = (alertas.data ?? []).filter((a) => !a.atendida);
+  const bajas = rows.filter((p) => p.stock_bajo);
+  const mes = new Date().toISOString().slice(0, 7);
+  const mermas = (kardex.data ?? [])
+    .filter((m) => m.tipo === 'MERMA' && m.fecha_hora.startsWith(mes))
+    .reduce((sum, m) => sum + Number(m.cantidad) * Number(m.lotes?.costo_unitario ?? 0), 0);
+  const kpis = [
+    ['Valor vigente', money.format(rows.reduce((s, p) => s + Number(p.valor_inventario || 0), 0)), PackageSearch],
+    ['Stock bajo', bajas.length, AlertTriangle],
+    ['Incidentes pendientes', (incidentes.data ?? []).filter((i) => i.estado === 'PENDIENTE').length, ClipboardList],
+    ['Mermas del mes', money.format(mermas), Bell],
+  ];
+
+  return (
+    <div className="space-y-6">
+      <section>
+        <h2 className="text-2xl font-bold">Resumen operativo</h2>
+        <p className="mt-1 text-sm text-txtsecondary">Control de existencias y alertas del kiosko en tiempo real.</p>
+      </section>
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {kpis.map(([label, value, Icon]) => (
+          <article className="card p-5" key={label}>
+            <Icon className="text-brand" size={22} />
+            <p className="mt-5 text-sm text-txtsecondary">{label}</p>
+            <p className="mt-1 text-2xl font-bold">{value}</p>
+          </article>
+        ))}
+      </div>
+      <div className="grid gap-6 lg:grid-cols-2">
+        <section className="card p-5">
+          <div className="flex items-center justify-between">
+            <h2 className="font-semibold">Alertas activas</h2>
+            <Badge variant="warning">{activos.length}</Badge>
+          </div>
+          {activos.length ? (
+            <div className="mt-4 space-y-3">
+              {activos.slice(0, 5).map((a) => (
+                <div className="rounded-xl bg-subtle p-3" key={a.id}>
+                  <Badge variant={a.tipo === 'INCIDENTE' ? 'info' : a.tipo === 'VENCIDO' ? 'danger' : 'warning'}>{a.tipo}</Badge>
+                  <p className="mt-2 text-sm">{a.mensaje}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <EmptyState icon={Bell} title="Sin alertas activas" description="El inventario no tiene alertas pendientes." />
+          )}
+        </section>
+        <section className="card p-5">
+          <h2 className="font-semibold">Qué pedir hoy</h2>
+          {bajas.length ? (
+            <div className="mt-4 space-y-3">
+              {bajas.map((p) => (
+                <div className="flex items-center justify-between rounded-xl bg-subtle p-3" key={p.id}>
+                  <div>
+                    <p className="font-medium">{p.nombre}</p>
+                    <p className="text-sm text-txtsecondary">Faltan {Math.max(0, p.stock_maximo - p.stock_disponible)} · {p.proveedor_principal_nombre ?? 'Sin proveedor'}</p>
+                  </div>
+                  <span className="font-semibold">{money.format(Math.max(0, p.stock_maximo - p.stock_disponible) * Number(p.costo_referencia || 0))}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <EmptyState icon={PackageSearch} title="Stock suficiente" description="No hay reposiciones urgentes." />
+          )}
+        </section>
+      </div>
+    </div>
+  );
+}

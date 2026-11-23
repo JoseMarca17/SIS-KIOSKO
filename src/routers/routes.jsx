@@ -14,7 +14,6 @@ import OperacionesPage from '../pages/OperacionesPage';
 import DashboardPage from '../pages/DashboardPage';
 import AlertasPage from '../pages/AlertasPage';
 import KardexPage from '../pages/KardexPage';
-import TemporaryPage from '../pages/TemporaryPage';
 
 function PublicOnlyRoute({ children }) {
   const { session, perfil, isLoadingSession } = useAuthStore();
@@ -24,8 +23,6 @@ function PublicOnlyRoute({ children }) {
   if (session && perfil) return <Navigate to="/dashboard" replace />;
   return children;
 }
-
-const temporary = (title, description) => <TemporaryPage title={title} description={description} />;
 
 export default function AppRoutes() {
   return (
