@@ -20,6 +20,7 @@
   --brand-solid: 75 43 181;        /* relleno con texto blanco */
   --brand-solid-hover: 61 33 150;
   --on-brand: 255 255 255;
+  --on-accent: 30 24 56;           /* texto oscuro sobre naranja (ambos temas) */
   --danger-solid: 220 38 38;       /* relleno peligro con texto blanco */
   --danger-solid-hover: 185 28 28;
 
@@ -65,6 +66,7 @@
   --brand-solid: 109 79 224;       /* #6D4FE0: blanco encima ≥ 4.5:1 */
   --brand-solid-hover: 91 61 212;  /* #5B3DD4 */
   --on-brand: 255 255 255;
+  --on-accent: 30 24 56;           /* texto oscuro sobre naranja (ambos temas) */
   --danger-solid: 220 38 38;
   --danger-solid-hover: 185 28 28;
 

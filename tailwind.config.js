@@ -21,6 +21,7 @@ export default {
         'brand-solid': token('--brand-solid'),
         'brand-solid-hover': token('--brand-solid-hover'),
         'on-brand': token('--on-brand'),
+        'on-accent': token('--on-accent'),
         'danger-solid': token('--danger-solid'),
         'danger-solid-hover': token('--danger-solid-hover'),
         accent: token('--accent'),
